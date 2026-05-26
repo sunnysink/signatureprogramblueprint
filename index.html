@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signature Program Blueprint</title>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Cardo:ital@0;1&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forest:#113228;--oxblood:#50140F;--copper:#B24C17;
+  --beige:#CBB79A;--vivid:#EE6D2F;--sage:#5EA892;
+  --ochre:#C99757;--brown:#9A6F3F;--stone:#D4CFC7;
+  --cream:#F5F0E8;--white:#FAFAF7;
+  --head:'Marcellus',serif;--accent:'Cardo',serif;--body:'Source Sans 3',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  min-height:100vh;font-family:var(--body);color:var(--forest);
+  background:linear-gradient(170deg,var(--cream) 0%,#e8dfd2 60%,#ddd8cf 100%);
+  padding:24px;
+}
+.wrap{max-width:720px;margin:0 auto;}
+.title{text-align:center;margin-bottom:32px;}
+.title h1{font-family:var(--head);font-size:34px;font-weight:400;letter-spacing:0.5px;color:var(--forest);}
+.title p{font-family:var(--body);font-size:14px;color:var(--brown);margin-top:8px;font-weight:300;}
+.card{background:rgba(250,250,247,0.8);border-radius:12px;padding:28px;backdrop-filter:blur(10px);}
+.steps{display:flex;gap:3px;margin-bottom:32px;}
+.step-btn{flex:1;padding:11px 8px;border:none;cursor:pointer;font-family:var(--body);font-size:11px;font-weight:400;letter-spacing:0.5px;text-transform:uppercase;transition:all 0.2s;}
+.step-btn:first-child{border-radius:6px 0 0 6px;}
+.step-btn:last-child{border-radius:0 6px 6px 0;}
+.step-btn.active{background:var(--forest);color:var(--cream);font-weight:600;}
+.step-btn.done{background:var(--sage);color:var(--cream);}
+.step-btn.future{background:rgba(255,255,255,0.5);color:var(--sage);}
+.sec-head{margin-bottom:24px;}
+.sec-head h2{font-family:var(--head);font-size:26px;color:var(--forest);font-weight:400;letter-spacing:0.5px;}
+.sec-head p{font-family:var(--body);font-size:14px;color:var(--brown);margin-top:6px;line-height:1.5;font-weight:300;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-family:var(--body);font-size:13px;font-weight:500;color:var(--brown);margin-bottom:6px;}
+.field input[type="text"],.field textarea{
+  width:100%;padding:10px 14px;border-radius:6px;border:1px solid var(--stone);
+  background:var(--white);font-family:var(--body);font-size:14px;color:var(--forest);
+  outline:none;transition:border-color 0.2s;
+}
+.field input[type="text"]:focus,.field textarea:focus{border-color:var(--sage);}
+.field textarea{resize:vertical;min-height:80px;}
+input[type="range"]{width:100%;accent-color:var(--copper);cursor:pointer;}
+.range-labels{display:flex;justify-content:space-between;font-family:var(--body);font-size:11px;color:var(--brown);}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.toggle-label{font-family:var(--body);font-size:13px;font-weight:500;color:var(--brown);}
+.toggle{width:44px;height:24px;border-radius:12px;border:none;cursor:pointer;position:relative;transition:background 0.2s;}
+.toggle .knob{width:18px;height:18px;border-radius:50%;background:white;position:absolute;top:3px;transition:left 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);}
+.toggle.on{background:var(--forest);}
+.toggle.on .knob{left:23px;}
+.toggle.off{background:var(--stone);}
+.toggle.off .knob{left:3px;}
+.phase-sel{display:flex;gap:8px;}
+.phase-sel button{flex:1;padding:12px;border-radius:6px;font-family:var(--head);font-size:16px;cursor:pointer;transition:all 0.2s;}
+.phase-sel button.active{border:2px solid var(--forest);background:var(--forest);color:var(--cream);}
+.phase-sel button.inactive{border:1px solid var(--stone);background:transparent;color:var(--forest);}
+.phase-card{background:var(--white);border-radius:8px;padding:20px;margin-bottom:16px;border-left:4px solid var(--copper);}
+.phase-card .phase-label{font-family:var(--body);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;}
+.week-card{background:var(--white);border-radius:8px;margin-bottom:10px;border-left:4px solid var(--sage);overflow:hidden;}
+.week-header{width:100%;padding:14px 18px;background:transparent;border:none;cursor:pointer;text-align:left;display:block;}
+.week-header:hover{background:rgba(0,0,0,0.01);}
+.week-top{display:flex;justify-content:space-between;align-items:center;}
+.week-title-area{display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex:1;min-width:0;}
+.week-num{font-family:var(--head);font-size:17px;color:var(--forest);flex-shrink:0;}
+.week-name{font-family:var(--body);font-size:13px;color:var(--brown);font-weight:300;}
+.week-badges{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:8px;}
+.phase-badge{padding:3px 8px;border-radius:4px;color:var(--cream);font-family:var(--body);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
+.week-arrow{color:var(--stone);font-size:16px;transition:transform 0.2s;}
+.week-arrow.open{transform:rotate(180deg);}
+.format-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
+.format-tag{padding:2px 8px;border-radius:4px;font-family:var(--body);font-size:10px;font-weight:500;}
+.week-body{padding:0 18px 18px;}
+.tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{padding:5px 12px;border-radius:4px;font-family:var(--body);font-size:12px;cursor:pointer;transition:all 0.2s;white-space:nowrap;border:1px solid var(--stone);background:transparent;color:var(--forest);}
+.tag.active{font-weight:600;color:var(--cream);}
+.adder{margin-top:8px;}
+.adder input{width:100%;padding:8px 12px;border-radius:6px;border:1px solid var(--stone);background:rgba(255,255,255,0.5);font-family:var(--body);font-size:12px;color:var(--forest);outline:none;}
+.transform-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.transform-row input{flex:1;min-width:140px;padding:10px 14px;border-radius:6px;border:1px solid var(--stone);background:var(--white);font-family:var(--body);font-size:13px;color:var(--forest);outline:none;}
+.transform-arrow{font-family:var(--head);color:var(--copper);font-size:18px;}
+.intensity-row{display:flex;gap:8px;}
+.intensity-btn{flex:1;padding:10px;border-radius:6px;cursor:pointer;text-align:center;transition:all 0.2s;}
+.intensity-btn.active{border:2px solid var(--copper);background:rgba(178,76,23,0.07);}
+.intensity-btn.inactive{border:1px solid var(--stone);background:transparent;}
+.intensity-icon{font-size:16px;margin-bottom:4px;}
+.intensity-label{font-family:var(--body);font-size:11px;font-weight:500;color:var(--forest);}
+.prompts-box{background:rgba(17,50,40,0.04);border-radius:8px;padding:16px;margin-top:8px;}
+.prompts-head{font-family:var(--head);font-size:15px;color:var(--forest);margin-bottom:12px;letter-spacing:0.5px;}
+.pacing{margin-bottom:24px;}
+.pacing-label{font-family:var(--body);font-size:13px;font-weight:500;color:var(--brown);margin-bottom:10px;}
+.pacing-bars{display:flex;gap:4px;height:40px;}
+.pacing-col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;}
+.pacing-bar{width:100%;border-radius:3px 3px 0 0;transition:height 0.3s;}
+.pacing-wk{font-family:var(--body);font-size:9px;color:var(--brown);margin-top:4px;}
+.snapshot{background:rgba(17,50,40,0.05);border-radius:10px;padding:24px;margin-top:24px;}
+.snap-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.snap-title{font-family:var(--head);font-size:18px;color:var(--forest);letter-spacing:0.5px;}
+.copy-btn{padding:6px 14px;border-radius:4px;border:1px solid var(--forest);background:transparent;color:var(--forest);font-family:var(--body);font-size:11px;font-weight:600;cursor:pointer;letter-spacing:0.3px;transition:all 0.2s;}
+.copy-btn.copied{background:var(--forest);color:var(--cream);}
+.snap-name{font-family:var(--head);font-size:20px;color:var(--forest);margin-bottom:4px;}
+.snap-transform{font-family:var(--accent);font-style:italic;font-size:14px;color:var(--brown);line-height:1.6;margin:4px 0 8px;}
+.snap-for{font-family:var(--body);font-size:12px;color:var(--brown);margin-bottom:8px;line-height:1.5;}
+.snap-meta{font-family:var(--body);font-size:13px;color:var(--forest);line-height:1.8;margin-bottom:8px;}
+.snap-week{padding:14px 0;border-bottom:1px solid rgba(212,207,199,0.4);}
+.snap-week-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.snap-wk-num{font-family:var(--head);font-size:14px;color:var(--forest);}
+.snap-wk-title{font-family:var(--body);font-size:13px;color:var(--brown);font-weight:300;margin-left:10px;}
+.snap-info{font-family:var(--body);font-size:12px;color:var(--forest);margin-bottom:5px;padding-left:8px;line-height:1.6;}
+.snap-info-label{color:var(--brown);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;}
+.snap-prompts{margin-top:6px;padding-left:8px;border-left:2px solid rgba(17,50,40,0.1);margin-left:8px;}
+.snap-prompts div{font-family:var(--body);font-size:11px;line-height:1.5;margin-bottom:3px;}
+.snap-unmapped{font-family:var(--body);font-size:12px;color:var(--stone);padding-left:8px;}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:28px;padding-top:20px;border-top:1px solid rgba(212,207,199,0.4);}
+.nav-btn{padding:10px 22px;border-radius:6px;font-family:var(--body);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.nav-back{border:1px solid var(--stone);background:transparent;color:var(--forest);}
+.nav-back:disabled{color:var(--stone);cursor:default;}
+.nav-next{border:none;background:var(--forest);color:var(--cream);}
+.nav-next:disabled{background:var(--sage);opacity:0.5;cursor:default;}
+.clear-btn{padding:8px 16px;border-radius:6px;border:1px solid var(--stone);background:transparent;color:var(--brown);font-family:var(--body);font-size:11px;font-weight:500;cursor:pointer;}
+.clear-btn:hover{border-color:var(--brown);}
+footer{margin-top:40px;padding-top:20px;border-top:1px solid rgba(212,207,199,0.4);text-align:center;}
+footer .brand{font-family:var(--body);font-size:11px;color:var(--brown);margin-bottom:6px;letter-spacing:0.3px;}
+footer .legal{font-family:var(--body);font-size:10px;color:var(--stone);display:flex;justify-content:center;flex-wrap:wrap;gap:6px;align-items:center;}
+footer a{color:var(--brown);text-decoration:none;}
+footer a:hover{text-decoration:underline;}
+.phase-assign{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.phase-assign button{padding:7px 14px;border-radius:6px;font-family:var(--body);font-size:12px;cursor:pointer;transition:all 0.2s;}
+.hidden{display:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="title">
+    <h1>Signature Program Blueprint</h1>
+    <p>Design your signature transformation, week by week</p>
+  </div>
+  <div class="steps" id="steps"></div>
+  <div class="card" id="content"></div>
+  <footer>
+    <div class="brand">Soul-Forged Founders</div>
+    <div class="legal">
+      <a href="https://www.sunnysink.com/privacy-policy" target="_blank">Privacy Policy</a>
+      <span>·</span>
+      <a href="https://www.sunnysink.com/terms-conditions" target="_blank">Terms &amp; Conditions</a>
+      <span>·</span>
+      <span>© 2026 S Sink Coaching</span>
+      <span>·</span>
+      <span>PO Box 1651 Gillette, WY 82717-1651</span>
+    </div>
+  </footer>
+</div>
+<script>
+const MODS=["Tarot Reading","Coaching (1:1)","Group Coaching","Energy Work / Reiki","Guided Meditation","Journaling / Reflection","Breathwork","Astrology","Oracle Cards","Ritual / Ceremony","EFT / Tapping","Human Design","Somatics / Body Work","Channeling","Akashic Records"];
+const FMTS=["Live Group Call","1:1 Session","Self-Paced Module","Integration / Rest","Q&A / Hot Seat","Practice Session","Workshop / Masterclass","Community Activity","Voxer / Voice Support","Email Support","Guest Expert","Co-Working Session"];
+const INT=[{id:"heavy",label:"Content Heavy",icon:"🔥🔥🔥"},{id:"balanced",label:"Balanced",icon:"🔥🔥"},{id:"integration",label:"Integration",icon:"🔥"}];
+const PCS=["#B24C17","#C99757","#5EA892","#EE6D2F"];
+const ALL_STEPS=["Foundation","Phases","Weekly Build","The After"];
+
+const emptyWeek=()=>({title:"",phase:0,modalities:[],customModalities:[],formats:[],customFormats:[],intensity:"",clientStart:"",clientEnd:"",deliverables:"",coreQuestion:"",releasing:"",activating:""});
+
+let state={
+  step:0,usePhases:true,
+  prog:{name:"",transformation:"",targetClient:"",duration:5,phaseCount:3},
+  phases:[{name:"",intention:""},{name:"",intention:""},{name:"",intention:""}],
+  weeks:Array.from({length:5},()=>emptyWeek()),
+  after:{nextOffer:"",bridge:"",integration:""},
+  openWeeks:new Set(),
+};
+
+function autoAssign(){
+  if(!state.usePhases)return;
+  const{duration,phaseCount}=state.prog;
+  const b=Math.floor(duration/phaseCount),r=duration%phaseCount;
+  const sz=[];for(let i=0;i<phaseCount;i++)sz.push(b+(i<r?1:0));
+  let pi=0,wi=0;
+  state.weeks.forEach(w=>{if(wi>=sz[pi]&&pi<phaseCount-1){pi++;wi=0;}wi++;w.phase=pi;});
+}
+
+function ranges(){
+  const{duration,phaseCount}=state.prog;
+  const b=Math.floor(duration/phaseCount),r=duration%phaseCount;
+  let out=[],s=1;
+  for(let i=0;i<phaseCount;i++){const c=b+(i<r?1:0);out.push(`${s}–${s+c-1}`);s+=c;}
+  return out;
+}
+
+function syncWeeks(){
+  const d=state.prog.duration-state.weeks.length;
+  if(d>0)for(let i=0;i<d;i++)state.weeks.push(emptyWeek());
+  else if(d<0)state.weeks.splice(state.prog.duration);
+  autoAssign();
+}
+
+function syncPhases(){
+  if(!state.usePhases)return;
+  const d=state.prog.phaseCount-state.phases.length;
+  if(d>0)for(let i=0;i<d;i++)state.phases.push({name:"",intention:""});
+  else if(d<0)state.phases.splice(state.prog.phaseCount);
+  autoAssign();
+}
+
+function visSteps(){return state.usePhases?ALL_STEPS:ALL_STEPS.filter(s=>s!=="Phases");}
+function visIdx(){return state.usePhases?[0,1,2,3]:[0,2,3];}
+
+function goNext(){
+  if(!state.usePhases&&state.step===0)state.step=2;
+  else if(!state.usePhases&&state.step===2)state.step=3;
+  else state.step=Math.min(3,state.step+1);
+  render();
+}
+function goBack(){
+  if(!state.usePhases&&state.step===2)state.step=0;
+  else if(!state.usePhases&&state.step===3)state.step=2;
+  else state.step=Math.max(0,state.step-1);
+  render();
+}
+function goStep(i){state.step=i;render();}
+
+function clearAll(){
+  state={step:0,usePhases:true,
+    prog:{name:"",transformation:"",targetClient:"",duration:5,phaseCount:3},
+    phases:[{name:"",intention:""},{name:"",intention:""},{name:"",intention:""}],
+    weeks:Array.from({length:5},()=>emptyWeek()),
+    after:{nextOffer:"",bridge:"",integration:""},
+    openWeeks:new Set(),
+  };render();
+}
+
+function h(tag,cls,html){return`<${tag}${cls?` class="${cls}"`:''}>${html||''}</${tag}>`;}
+
+function renderSteps(){
+  const vs=visSteps(),vi=visIdx();
+  document.getElementById('steps').innerHTML=vs.map((s,i)=>{
+    const ai=vi[i];
+    const c=ai===state.step?'active':ai<state.step?'done':'future';
+    return`<button class="step-btn ${c}" onclick="goStep(${ai})">${s}</button>`;
+  }).join('');
+}
+
+function fieldHTML(id,label,val,ph,multi){
+  const tag=multi?`<textarea id="${id}" placeholder="${ph}" onfocus="this.style.borderColor='var(--sage)'" onblur="this.style.borderColor='var(--stone)'">${val}</textarea>`
+    :`<input type="text" id="${id}" value="${esc(val)}" placeholder="${ph}" onfocus="this.style.borderColor='var(--sage)'" onblur="this.style.borderColor='var(--stone)'">`;
+  return`<div class="field"><label>${label}</label>${tag}</div>`;
+}
+
+function esc(s){return s.replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+
+function tagHTML(items,activeList,color,clickFn){
+  return items.map(m=>{
+    const a=activeList.includes(m);
+    return`<button class="tag${a?' active':''}" style="${a?`border-color:${color};background:${color}`:''}" onclick="${clickFn}('${m.replace(/'/g,"\\'")}')">${m}</button>`;
+  }).join('');
+}
+
+function renderFoundation(){
+  const p=state.prog;
+  let html=`<div class="sec-head"><h2>Program Foundation</h2><p>Define the container before you fill it.</p></div>`;
+  html+=fieldHTML('prog-name','Program Name',p.name,'What is this program called?');
+  html+=fieldHTML('prog-transform','The Big Transformation',p.transformation,'Where does your client start, and where do they land by the end?',true);
+  html+=fieldHTML('prog-target','Who Is This For?',p.targetClient,'Describe your ideal client for this program...',true);
+  html+=`<div class="field"><label>Program Duration — ${p.duration} weeks</label>
+    <input type="range" min="3" max="12" value="${p.duration}" id="dur-slider" oninput="setDuration(this.value)">
+    <div class="range-labels"><span>3 weeks</span><span>12 weeks</span></div></div>`;
+  html+=`<div style="background:rgba(250,250,247,0.5);border-radius:8px;padding:16px;margin-bottom:16px">
+    <div class="toggle-row"><span class="toggle-label">Use Phases to Group Weeks?</span>
+    <button class="toggle ${state.usePhases?'on':'off'}" onclick="togglePhases()"><div class="knob"></div></button></div>`;
+  if(state.usePhases){
+    html+=`<div class="field"><label>Number of Phases — ${p.phaseCount}</label>
+      <div class="phase-sel">${[2,3,4].map(n=>`<button class="${p.phaseCount===n?'active':'inactive'}" onclick="setPhaseCount(${n})">${n}</button>`).join('')}</div></div>`;
+  }
+  html+=`</div>`;
+  return html;
+}
+
+function renderPhases(){
+  const rs=ranges();
+  let html=`<div class="sec-head"><h2>Phase Architecture</h2><p>Name the chapters of your client's journey.</p></div>`;
+  state.phases.forEach((p,i)=>{
+    const c=PCS[i%PCS.length];
+    html+=`<div class="phase-card" style="border-left-color:${c}">
+      <div class="phase-label" style="color:${c}">Phase ${i+1} · Weeks ${rs[i]}</div>
+      ${fieldHTML(`phase-name-${i}`,'Phase Name',p.name,'e.g. Awakening, Foundation, Integration...')}
+      ${fieldHTML(`phase-int-${i}`,'Phase Intention',p.intention,'What is the overarching purpose of this phase?',true)}
+    </div>`;
+  });
+  return html;
+}
+
+function renderWeekly(){
+  let html=`<div class="sec-head"><h2>Weekly Build</h2><p>Expand each week to map the modalities, transformation, format, and deliverables.</p></div>`;
+  // Pacing
+  html+=`<div class="pacing"><div class="pacing-label">Pacing Overview</div><div class="pacing-bars">`;
+  const ic={heavy:'var(--copper)',balanced:'var(--ochre)',integration:'var(--sage)'};
+  state.weeks.forEach((w,i)=>{
+    const ht=w.intensity==='heavy'?'100%':w.intensity==='balanced'?'66%':w.intensity==='integration'?'33%':'10%';
+    const bg=ic[w.intensity]||'var(--stone)';const op=w.intensity?1:0.25;
+    html+=`<div class="pacing-col"><div class="pacing-bar" style="height:${ht};background:${bg};opacity:${op}"></div><span class="pacing-wk">W${i+1}</span></div>`;
+  });
+  html+=`</div></div>`;
+  // Weeks
+  state.weeks.forEach((w,i)=>{
+    const pc=state.usePhases?PCS[w.phase%PCS.length]:'var(--sage)';
+    const af=[...w.formats,...w.customFormats];
+    const isOpen=state.openWeeks.has(i);
+    html+=`<div class="week-card" style="border-left-color:${pc}">
+      <button class="week-header" onclick="toggleWeek(${i})">
+        <div class="week-top">
+          <div class="week-title-area">
+            <span class="week-num">Week ${i+1}</span>
+            ${w.title?`<span class="week-name">— ${esc(w.title)}</span>`:''}
+          </div>
+          <div class="week-badges">
+            ${w.intensity?`<span style="font-size:12px">${INT.find(l=>l.id===w.intensity)?.icon||''}</span>`:''}
+            ${state.usePhases&&state.phases[w.phase]?.name?`<span class="phase-badge" style="background:${pc}">${esc(state.phases[w.phase].name)}</span>`:''}
+            <span class="week-arrow${isOpen?' open':''}">▾</span>
+          </div>
+        </div>
+        ${!isOpen&&af.length?`<div class="format-tags">${af.map(f=>`<span class="format-tag" style="background:rgba(94,168,146,0.1);color:var(--sage)">${esc(f)}</span>`).join('')}</div>`:''}
+      </button>`;
+    if(isOpen){
+      html+=`<div class="week-body">`;
+      // Phase assign
+      if(state.usePhases&&state.phases.length>1){
+        html+=`<div class="field"><label>Assign to Phase</label><div class="phase-assign">`;
+        state.phases.forEach((p,pi)=>{
+          const ac=w.phase===pi;const c=PCS[pi%PCS.length];
+          html+=`<button style="border:${ac?'2px':'1px'} solid ${ac?c:'var(--stone)'};background:${ac?c:'transparent'};color:${ac?'var(--cream)':'var(--forest)'};font-weight:${ac?600:400}" onclick="assignPhase(${i},${pi})">${esc(p.name)||'Phase '+(pi+1)}</button>`;
+        });
+        html+=`</div></div>`;
+      }
+      html+=fieldHTML(`wk-title-${i}`,'Week Title',w.title,'e.g. Opening the Portal, Anchoring Your Method...');
+      // Transform
+      html+=`<div class="field"><label>Transformation Arc</label>
+        <div class="transform-row">
+          <input type="text" id="wk-start-${i}" value="${esc(w.clientStart)}" placeholder="Client arrives feeling..." onchange="setWeekField(${i},'clientStart',this.value)">
+          <span class="transform-arrow">→</span>
+          <input type="text" id="wk-end-${i}" value="${esc(w.clientEnd)}" placeholder="Client leaves with..." onchange="setWeekField(${i},'clientEnd',this.value)">
+        </div></div>`;
+      // Modalities
+      html+=`<div class="field"><label>Modalities Used</label><div class="tags">`;
+      html+=tagHTML(MODS,w.modalities,'var(--forest)',`toggleMod.bind(null,${i})`);
+      w.customModalities.forEach((m,ci)=>{
+        html+=`<button class="tag active" style="border-color:var(--copper);background:var(--copper)" onclick="removeCustomMod(${i},${ci})">${esc(m)}</button>`;
+      });
+      html+=`</div><div class="adder"><input placeholder="+ Add custom modality (press Enter)" onkeydown="addCustomMod(event,${i})"></div></div>`;
+      // Formats
+      html+=`<div class="field"><label>Session Format</label><div class="tags">`;
+      html+=tagHTML(FMTS,w.formats,'var(--sage)',`toggleFmt.bind(null,${i})`);
+      w.customFormats.forEach((f,ci)=>{
+        html+=`<button class="tag active" style="border-color:var(--copper);background:var(--copper)" onclick="removeCustomFmt(${i},${ci})">${esc(f)}</button>`;
+      });
+      html+=`</div><div class="adder"><input placeholder="+ Add custom format (press Enter)" onkeydown="addCustomFmt(event,${i})"></div></div>`;
+      // Intensity
+      html+=`<div class="field"><label>Intensity Level</label><div class="intensity-row">`;
+      INT.forEach(l=>{
+        const ac=w.intensity===l.id;
+        html+=`<button class="intensity-btn ${ac?'active':'inactive'}" onclick="setIntensity(${i},'${l.id}')">
+          <div class="intensity-icon">${l.icon}</div><div class="intensity-label">${l.label}</div></button>`;
+      });
+      html+=`</div></div>`;
+      // Deliverables
+      html+=fieldHTML(`wk-del-${i}`,'Client Deliverables',w.deliverables,'What does the client walk away with?',true);
+      // Prompts
+      html+=`<div class="prompts-box"><div class="prompts-head">✦ Transformation Prompts</div>
+        ${fieldHTML(`wk-cq-${i}`,'What is the core question this week answers?',w.coreQuestion,'e.g. How do I trust what I\'m receiving?')}
+        ${fieldHTML(`wk-rel-${i}`,'What belief or pattern is being released?',w.releasing,'e.g. The belief that intuition isn\'t reliable enough')}
+        ${fieldHTML(`wk-act-${i}`,'What new capacity is being activated?',w.activating,'e.g. Confidence to name and claim their unique reading style')}
+      </div>`;
+      html+=`</div>`;
+    }
+    html+=`</div>`;
+  });
+  return html;
+}
+
+function renderAfter(){
+  const a=state.after;
+  let html=`<div class="sec-head"><h2>The After</h2><p>Where does the momentum carry them after the final week?</p></div>`;
+  html+=fieldHTML('after-next',"What's the natural next offer or container?",a.nextOffer,'e.g. A membership, a 1:1 package, a mastermind...',true);
+  html+=fieldHTML('after-bridge','How will you bridge them there?',a.bridge,'A call, an email sequence, a special offer?',true);
+  html+=fieldHTML('after-int','Integration Period',a.integration,'Post-program integration window? Community access?',true);
+  // Snapshot
+  html+=`<div class="snapshot"><div class="snap-header">
+    <div class="snap-title">✦ Program Blueprint</div>
+    <button class="copy-btn" id="copy-btn" onclick="copySnap()">Copy to Clipboard</button></div>`;
+  if(state.prog.name)html+=`<div class="snap-name">${esc(state.prog.name)}</div>`;
+  if(state.prog.transformation)html+=`<div class="snap-transform">"${esc(state.prog.transformation)}"</div>`;
+  if(state.prog.targetClient)html+=`<div class="snap-for">For: ${esc(state.prog.targetClient)}</div>`;
+  let meta=`<strong>${state.prog.duration} weeks</strong>`;
+  if(state.usePhases){
+    meta+=` · ${state.prog.phaseCount} phases`;
+    const pn=state.phases.filter(p=>p.name).map(p=>p.name);
+    if(pn.length)meta+=` · ${pn.map(esc).join(' → ')}`;
+  }
+  html+=`<div class="snap-meta">${meta}</div>`;
+  if(state.usePhases&&state.phases.some(p=>p.intention)){
+    html+=`<div style="margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(212,207,199,0.4)">`;
+    state.phases.filter(p=>p.name||p.intention).forEach((p,i)=>{
+      html+=`<div style="margin-bottom:4px"><span style="font-family:var(--body);font-size:11px;font-weight:600;color:${PCS[i%PCS.length]};text-transform:uppercase;letter-spacing:0.5px">${esc(p.name)||'Phase '+(i+1)}</span>`;
+      if(p.intention)html+=`<span style="font-family:var(--body);font-size:12px;color:var(--forest);margin-left:8px">— ${esc(p.intention)}</span>`;
+      html+=`</div>`;
+    });
+    html+=`</div>`;
+  }
+  state.weeks.forEach((w,i)=>{
+    const am=[...w.modalities,...w.customModalities];
+    const af=[...w.formats,...w.customFormats];
+    const has=w.title||w.clientStart||w.clientEnd||am.length||af.length||w.deliverables||w.coreQuestion||w.releasing||w.activating;
+    const pc=state.usePhases?PCS[w.phase%PCS.length]:'var(--sage)';
+    html+=`<div class="snap-week"><div class="snap-week-top"><div>
+      <span class="snap-wk-num">Week ${i+1}</span>
+      ${w.title?`<span class="snap-wk-title">${esc(w.title)}</span>`:''}
+    </div><div style="display:flex;align-items:center;gap:8px">
+      ${w.intensity?`<span style="font-size:12px">${INT.find(l=>l.id===w.intensity)?.icon||''}</span>`:''}
+      ${state.usePhases&&state.phases[w.phase]?.name?`<span class="phase-badge" style="background:${pc};font-size:9px">${esc(state.phases[w.phase].name)}</span>`:''}
+    </div></div>`;
+    if(w.clientStart||w.clientEnd)html+=`<div class="snap-info"><span class="snap-info-label">Transformation: </span>${esc(w.clientStart)}${w.clientStart&&w.clientEnd?' <span style="color:var(--copper)">→</span> ':''}${esc(w.clientEnd)}</div>`;
+    if(am.length)html+=`<div class="snap-info"><span class="snap-info-label">Modalities: </span>${am.map(esc).join(', ')}</div>`;
+    if(af.length)html+=`<div class="snap-info"><span class="snap-info-label">Format: </span>${af.map(esc).join(', ')}</div>`;
+    if(w.deliverables)html+=`<div class="snap-info"><span class="snap-info-label">Deliverables: </span>${esc(w.deliverables)}</div>`;
+    if(w.coreQuestion||w.releasing||w.activating){
+      html+=`<div class="snap-prompts">`;
+      if(w.coreQuestion)html+=`<div style="font-family:var(--accent);font-style:italic;color:var(--brown)">Core Question: ${esc(w.coreQuestion)}</div>`;
+      if(w.releasing)html+=`<div style="color:var(--brown)">Releasing: ${esc(w.releasing)}</div>`;
+      if(w.activating)html+=`<div style="color:var(--copper)">Activating: ${esc(w.activating)}</div>`;
+      html+=`</div>`;
+    }
+    if(!has)html+=`<div class="snap-unmapped">(not yet mapped)</div>`;
+    html+=`</div>`;
+  });
+  if(a.nextOffer||a.bridge||a.integration){
+    html+=`<div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(212,207,199,0.4)">
+      <div style="font-family:var(--head);font-size:15px;color:var(--forest);margin-bottom:8px;letter-spacing:0.5px">✦ The After</div>`;
+    if(a.nextOffer)html+=`<div class="snap-info"><span class="snap-info-label">Next Offer: </span>${esc(a.nextOffer)}</div>`;
+    if(a.bridge)html+=`<div class="snap-info"><span class="snap-info-label">Bridge: </span>${esc(a.bridge)}</div>`;
+    if(a.integration)html+=`<div class="snap-info"><span class="snap-info-label">Integration: </span>${esc(a.integration)}</div>`;
+    html+=`</div>`;
+  }
+  html+=`</div>`;
+  return html;
+}
+
+function renderNav(){
+  return`<div class="nav-row">
+    <button class="nav-btn nav-back" onclick="goBack()"${state.step===0?' disabled':''}>← Back</button>
+    <button class="clear-btn" onclick="clearAll()">Clear All</button>
+    <button class="nav-btn nav-next" onclick="goNext()"${state.step===3?' disabled':''}>Next →</button>
+  </div>`;
+}
+
+function saveInputs(){
+  const g=(id)=>{const e=document.getElementById(id);return e?(e.tagName==='TEXTAREA'?e.value:e.value):null;};
+  if(state.step===0){
+    const n=g('prog-name');if(n!==null)state.prog.name=n;
+    const t=g('prog-transform');if(t!==null)state.prog.transformation=t;
+    const c=g('prog-target');if(c!==null)state.prog.targetClient=c;
+  }
+  if(state.step===1&&state.usePhases){
+    state.phases.forEach((p,i)=>{
+      const n=g(`phase-name-${i}`);if(n!==null)p.name=n;
+      const t=g(`phase-int-${i}`);if(t!==null)p.intention=t;
+    });
+  }
+  if(state.step===2){
+    state.weeks.forEach((w,i)=>{
+      const t=g(`wk-title-${i}`);if(t!==null)w.title=t;
+      const s=g(`wk-start-${i}`);if(s!==null)w.clientStart=s;
+      const e=g(`wk-end-${i}`);if(e!==null)w.clientEnd=e;
+      const d=g(`wk-del-${i}`);if(d!==null)w.deliverables=d;
+      const cq=g(`wk-cq-${i}`);if(cq!==null)w.coreQuestion=cq;
+      const rl=g(`wk-rel-${i}`);if(rl!==null)w.releasing=rl;
+      const ac=g(`wk-act-${i}`);if(ac!==null)w.activating=ac;
+    });
+  }
+  if(state.step===3){
+    const n=g('after-next');if(n!==null)state.after.nextOffer=n;
+    const b=g('after-bridge');if(b!==null)state.after.bridge=b;
+    const t=g('after-int');if(t!==null)state.after.integration=t;
+  }
+}
+
+function render(){
+  saveInputs();
+  renderSteps();
+  let html='';
+  if(state.step===0)html=renderFoundation();
+  else if(state.step===1&&state.usePhases)html=renderPhases();
+  else if(state.step===2)html=renderWeekly();
+  else if(state.step===3)html=renderAfter();
+  html+=renderNav();
+  document.getElementById('content').innerHTML=html;
+}
+
+// Actions
+function setDuration(v){saveInputs();state.prog.duration=parseInt(v);syncWeeks();render();}
+function togglePhases(){saveInputs();state.usePhases=!state.usePhases;if(!state.usePhases&&state.step===1)state.step=0;render();}
+function setPhaseCount(n){saveInputs();state.prog.phaseCount=n;syncPhases();render();}
+function toggleWeek(i){saveInputs();state.openWeeks.has(i)?state.openWeeks.delete(i):state.openWeeks.add(i);render();}
+function assignPhase(wi,pi){saveInputs();state.weeks[wi].phase=pi;render();}
+function setWeekField(i,f,v){state.weeks[i][f]=v;}
+function toggleMod(wi,m){saveInputs();const ms=state.weeks[wi].modalities;const idx=ms.indexOf(m);idx>=0?ms.splice(idx,1):ms.push(m);render();}
+function removeCustomMod(wi,ci){saveInputs();state.weeks[wi].customModalities.splice(ci,1);render();}
+function addCustomMod(e,wi){if(e.key==='Enter'&&e.target.value.trim()){saveInputs();state.weeks[wi].customModalities.push(e.target.value.trim());e.target.value='';render();}}
+function toggleFmt(wi,f){saveInputs();const fs=state.weeks[wi].formats;const idx=fs.indexOf(f);idx>=0?fs.splice(idx,1):fs.push(f);render();}
+function removeCustomFmt(wi,ci){saveInputs();state.weeks[wi].customFormats.splice(ci,1);render();}
+function addCustomFmt(e,wi){if(e.key==='Enter'&&e.target.value.trim()){saveInputs();state.weeks[wi].customFormats.push(e.target.value.trim());e.target.value='';render();}}
+function setIntensity(wi,id){saveInputs();state.weeks[wi].intensity=state.weeks[wi].intensity===id?'':id;render();}
+
+function copySnap(){
+  saveInputs();
+  const p=state.prog,ph=state.phases,ws=state.weeks,a=state.after,up=state.usePhases;
+  let t=`✦ SIGNATURE PROGRAM BLUEPRINT\n\n`;
+  if(p.name)t+=`${p.name.toUpperCase()}\n`;
+  if(p.transformation)t+=`"${p.transformation}"\n`;
+  if(p.targetClient)t+=`For: ${p.targetClient}\n`;
+  t+=`${p.duration} weeks`;
+  if(up){const pn=ph.filter(x=>x.name).map(x=>x.name);t+=` · ${p.phaseCount} phases`;if(pn.length)t+=` · ${pn.join(' → ')}`;}
+  t+=`\n`;
+  if(up){const nd=ph.filter(x=>x.name||x.intention);if(nd.length){t+=`\n--- PHASES ---\n`;nd.forEach((x,i)=>{t+=`\nPhase ${i+1}: ${x.name||'(unnamed)'}`;if(x.intention)t+=`\n  ${x.intention}`;t+=`\n`;});}}
+  t+=`\n--- WEEKLY BREAKDOWN ---\n`;
+  ws.forEach((w,i)=>{
+    t+=`\nWEEK ${i+1}`;if(w.title)t+=`: ${w.title}`;
+    if(w.intensity)t+=` [${INT.find(l=>l.id===w.intensity)?.label}]`;
+    if(up&&ph[w.phase]?.name)t+=` (${ph[w.phase].name})`;t+=`\n`;
+    if(w.clientStart||w.clientEnd)t+=`  Transformation: ${w.clientStart||'...'}  →  ${w.clientEnd||'...'}\n`;
+    const am=[...w.modalities,...w.customModalities];if(am.length)t+=`  Modalities: ${am.join(', ')}\n`;
+    const af=[...w.formats,...w.customFormats];if(af.length)t+=`  Format: ${af.join(', ')}\n`;
+    if(w.deliverables)t+=`  Deliverables: ${w.deliverables}\n`;
+    if(w.coreQuestion)t+=`  Core Question: ${w.coreQuestion}\n`;
+    if(w.releasing)t+=`  Releasing: ${w.releasing}\n`;
+    if(w.activating)t+=`  Activating: ${w.activating}\n`;
+  });
+  if(a.nextOffer||a.bridge||a.integration){
+    t+=`\n--- THE AFTER ---\n`;
+    if(a.nextOffer)t+=`Next Offer: ${a.nextOffer}\n`;
+    if(a.bridge)t+=`Bridge: ${a.bridge}\n`;
+    if(a.integration)t+=`Integration: ${a.integration}\n`;
+  }
+  navigator.clipboard.writeText(t).then(()=>{
+    const btn=document.getElementById('copy-btn');btn.textContent='✓ Copied!';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copy to Clipboard';btn.classList.remove('copied');},2000);
+  }).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    const btn=document.getElementById('copy-btn');btn.textContent='✓ Copied!';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copy to Clipboard';btn.classList.remove('copied');},2000);
+  });
+}
+
+render();
+</script>
+</body>
+</html>
