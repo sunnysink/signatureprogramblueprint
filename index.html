@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Signature Program Blueprint</title>
-<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Cardo:ital@0;1&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Cardo:ital@0;1&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --forest:#113228;--oxblood:#50140F;--copper:#B24C17;
@@ -23,9 +23,10 @@ body{
 .title{text-align:center;margin-bottom:32px;}
 .title h1{font-family:var(--head);font-size:34px;font-weight:400;letter-spacing:0.5px;color:var(--forest);}
 .title p{font-family:var(--body);font-size:14px;color:var(--brown);margin-top:8px;font-weight:300;}
+.save-status{text-align:center;margin-top:6px;font-family:var(--body);font-size:11px;color:var(--sage);letter-spacing:0.3px;min-height:16px;transition:opacity 0.3s;}
 .card{background:rgba(250,250,247,0.8);border-radius:12px;padding:28px;backdrop-filter:blur(10px);}
-.steps{display:flex;gap:3px;margin-bottom:32px;}
-.step-btn{flex:1;padding:11px 8px;border:none;cursor:pointer;font-family:var(--body);font-size:11px;font-weight:400;letter-spacing:0.5px;text-transform:uppercase;transition:all 0.2s;}
+.steps{display:flex;gap:3px;margin-bottom:32px;flex-wrap:wrap;}
+.step-btn{flex:1;padding:11px 6px;border:none;cursor:pointer;font-family:var(--body);font-size:10px;font-weight:400;letter-spacing:0.4px;text-transform:uppercase;transition:all 0.2s;min-width:0;}
 .step-btn:first-child{border-radius:6px 0 0 6px;}
 .step-btn:last-child{border-radius:0 6px 6px 0;}
 .step-btn.active{background:var(--forest);color:var(--cream);font-weight:600;}
@@ -34,15 +35,18 @@ body{
 .sec-head{margin-bottom:24px;}
 .sec-head h2{font-family:var(--head);font-size:26px;color:var(--forest);font-weight:400;letter-spacing:0.5px;}
 .sec-head p{font-family:var(--body);font-size:14px;color:var(--brown);margin-top:6px;line-height:1.5;font-weight:300;}
-.field{margin-bottom:16px;}
-.field label{display:block;font-family:var(--body);font-size:13px;font-weight:500;color:var(--brown);margin-bottom:6px;}
+.field{margin-bottom:20px;}
+.field label{display:block;font-family:var(--head);font-size:16px;color:var(--copper);margin-bottom:2px;letter-spacing:0.5px;}
+.field .field-guide{display:block;font-family:var(--accent);font-style:italic;font-size:13px;color:var(--brown);margin-bottom:8px;line-height:1.4;}
 .field input[type="text"],.field textarea{
-  width:100%;padding:10px 14px;border-radius:6px;border:1px solid var(--stone);
+  width:100%;padding:12px 16px;border-radius:6px;border:1px solid var(--stone);
   background:var(--white);font-family:var(--body);font-size:14px;color:var(--forest);
-  outline:none;transition:border-color 0.2s;
+  outline:none;transition:border-color 0.2s;line-height:1.6;
 }
 .field input[type="text"]:focus,.field textarea:focus{border-color:var(--sage);}
-.field textarea{resize:vertical;min-height:80px;}
+.field textarea{resize:vertical;min-height:90px;}
+.field-sm label{font-family:var(--body);font-size:13px;font-weight:500;color:var(--brown);}
+.field-sm .field-guide{display:none;}
 input[type="range"]{width:100%;accent-color:var(--copper);cursor:pointer;}
 .range-labels{display:flex;justify-content:space-between;font-family:var(--body);font-size:11px;color:var(--brown);}
 .toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
@@ -128,7 +132,96 @@ footer a{color:var(--brown);text-decoration:none;}
 footer a:hover{text-decoration:underline;}
 .phase-assign{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
 .phase-assign button{padding:7px 14px;border-radius:6px;font-family:var(--body);font-size:12px;cursor:pointer;transition:all 0.2s;}
-.hidden{display:none;}
+
+/* ── Tone Selector ── */
+.tone-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+.tone-btn{
+  padding:14px 8px;border-radius:8px;cursor:pointer;text-align:center;
+  transition:all 0.2s;border:1px solid var(--stone);background:transparent;
+}
+.tone-btn.active{border:2px solid var(--forest);background:var(--forest);color:var(--cream);}
+.tone-btn .tone-icon{font-size:16px;margin-bottom:4px;display:block;}
+.tone-btn .tone-name{font-family:var(--body);font-size:13px;font-weight:600;display:block;}
+
+/* ── Generate Button ── */
+.gen-btn{
+  display:block;width:100%;padding:18px 24px;border:none;border-radius:8px;cursor:pointer;
+  font-family:var(--head);font-size:18px;letter-spacing:1px;color:var(--cream);
+  background:linear-gradient(135deg,var(--copper) 0%,var(--ochre) 50%,var(--vivid) 100%);
+  transition:all 0.2s;margin-bottom:12px;text-transform:uppercase;
+}
+.gen-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(178,76,23,0.3);}
+.gen-btn:disabled{opacity:0.5;cursor:default;transform:none;box-shadow:none;}
+.gen-btn .gen-arrow{font-family:var(--body);}
+.copy-all-btn{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  width:100%;padding:12px;border:1px solid var(--stone);border-radius:6px;
+  background:transparent;cursor:pointer;font-family:var(--body);font-size:12px;
+  font-weight:600;color:var(--forest);letter-spacing:0.3px;transition:all 0.2s;
+}
+.copy-all-btn:hover{border-color:var(--forest);}
+.copy-all-btn.copied{background:var(--forest);color:var(--cream);border-color:var(--forest);}
+.gen-note{text-align:center;font-family:var(--accent);font-style:italic;font-size:12px;color:var(--brown);margin-top:6px;}
+
+/* ── Prompt Library Cards ── */
+.pl-category{margin-bottom:24px;}
+.pl-cat-head{font-family:var(--head);font-size:18px;color:var(--forest);letter-spacing:0.5px;margin-bottom:2px;}
+.pl-cat-desc{font-family:var(--accent);font-style:italic;font-size:13px;color:var(--brown);margin-bottom:12px;}
+.pl-card{
+  background:var(--white);border-radius:8px;margin-bottom:8px;
+  border:1px solid var(--stone);overflow:hidden;transition:border-color 0.2s;
+}
+.pl-card:hover{border-color:var(--sage);}
+.pl-card-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 18px;cursor:pointer;border:none;background:transparent;width:100%;text-align:left;
+}
+.pl-card-left{display:flex;flex-direction:column;gap:2px;}
+.pl-card-title{font-family:var(--body);font-size:14px;font-weight:600;color:var(--forest);}
+.pl-card-type{font-family:var(--body);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;color:var(--sage);}
+.pl-card-type.start{color:var(--copper);}
+.pl-card-type.deep{color:var(--ochre);}
+.pl-card-type.ongoing{color:var(--brown);}
+.pl-card-plus{font-size:20px;color:var(--stone);transition:transform 0.2s;flex-shrink:0;font-weight:300;}
+.pl-card-plus.open{transform:rotate(45deg);}
+.pl-card-body{
+  padding:0 18px 18px;font-family:var(--body);font-size:13px;color:var(--forest);line-height:1.7;
+  animation:plReveal 0.2s ease-out;
+}
+@keyframes plReveal{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+.pl-card-body p{margin-bottom:10px;}
+.pl-card-body ul{margin:0 0 10px 18px;}
+.pl-card-body li{margin-bottom:4px;}
+.pl-card-copy{
+  display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:4px;
+  border:1px solid var(--stone);background:transparent;cursor:pointer;
+  font-family:var(--body);font-size:11px;font-weight:500;color:var(--brown);
+  transition:all 0.15s;margin-top:4px;
+}
+.pl-card-copy:hover{border-color:var(--forest);color:var(--forest);}
+.pl-card-copy.copied{background:var(--forest);color:var(--cream);border-color:var(--forest);}
+.pl-prompt-block{
+  background:rgba(17,50,40,0.04);border-radius:6px;padding:14px 16px;
+  font-family:var(--body);font-size:13px;color:var(--forest);line-height:1.7;
+  border-left:3px solid var(--sage);margin-bottom:12px;white-space:pre-wrap;word-wrap:break-word;
+}
+
+/* Loading */
+.gen-loading{text-align:center;padding:40px 20px;}
+.gen-loading .spinner{
+  width:36px;height:36px;border:3px solid var(--stone);border-top-color:var(--copper);
+  border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.gen-loading p{font-family:var(--accent);font-style:italic;font-size:14px;color:var(--brown);}
+
+/* Method name optional styling */
+.optional-badge{
+  display:inline-block;padding:2px 8px;border-radius:3px;
+  background:rgba(94,168,146,0.15);color:var(--sage);
+  font-family:var(--body);font-size:10px;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.5px;margin-left:8px;vertical-align:middle;
+}
 </style>
 </head>
 <body>
@@ -136,6 +229,7 @@ footer a:hover{text-decoration:underline;}
   <div class="title">
     <h1>Signature Program Blueprint</h1>
     <p>Design your signature transformation, week by week</p>
+    <div class="save-status" id="save-status"></div>
   </div>
   <div class="steps" id="steps"></div>
   <div class="card" id="content"></div>
@@ -157,43 +251,95 @@ const MODS=["Tarot Reading","Coaching (1:1)","Group Coaching","Energy Work / Rei
 const FMTS=["Live Group Call","1:1 Session","Self-Paced Module","Integration / Rest","Q&A / Hot Seat","Practice Session","Workshop / Masterclass","Community Activity","Voxer / Voice Support","Email Support","Guest Expert","Co-Working Session"];
 const INT=[{id:"heavy",label:"Content Heavy",icon:"🔥🔥🔥"},{id:"balanced",label:"Balanced",icon:"🔥🔥"},{id:"integration",label:"Integration",icon:"🔥"}];
 const PCS=["#B24C17","#C99757","#5EA892","#EE6D2F"];
-const ALL_STEPS=["Foundation","Phases","Weekly Build","The After"];
+const TONES=[
+  {id:"grounded",label:"Grounded",icon:"◆"},
+  {id:"fiery",label:"Fiery",icon:"△"},
+  {id:"mystical",label:"Mystical",icon:"✦"},
+  {id:"nurturing",label:"Nurturing",icon:"✻"},
+  {id:"bold",label:"Bold",icon:"◆"},
+  {id:"poetic",label:"Poetic",icon:"✧"},
+  {id:"other",label:"Other",icon:"○"},
+];
+const ALL_STEPS=["Foundation","Phases","Weekly Build","The After","Prompt Library"];
 
 const emptyWeek=()=>({title:"",phase:0,modalities:[],customModalities:[],formats:[],customFormats:[],intensity:"",clientStart:"",clientEnd:"",deliverables:"",coreQuestion:"",releasing:"",activating:""});
 
-let state={
+const defaultState=()=>({
   step:0,usePhases:true,
-  prog:{name:"",transformation:"",targetClient:"",duration:5,phaseCount:3},
+  prog:{name:"",methodName:"",idealClient:"",beforeState:"",afterState:"",programExperience:"",coreShift:"",tone:"",duration:5,phaseCount:3},
   phases:[{name:"",intention:""},{name:"",intention:""},{name:"",intention:""}],
   weeks:Array.from({length:5},()=>emptyWeek()),
   after:{nextOffer:"",bridge:"",integration:""},
-  openWeeks:new Set(),
-};
+  openWeeks:[],
+  promptsExpanded:[],
+});
 
+let state=defaultState();
+state.openWeeks=new Set();
+state.promptsExpanded=new Set();
+
+// ── Persistence ──
+const STORAGE_KEY='signature-blueprint-v3';
+let saveTimer=null;
+
+async function saveState(){
+  try{
+    if(typeof window.storage==='undefined')return;
+    const s={...state,openWeeks:Array.from(state.openWeeks),promptsExpanded:Array.from(state.promptsExpanded)};
+    await window.storage.set(STORAGE_KEY,JSON.stringify(s));
+    showSaveStatus('✦ Saved');
+  }catch(e){console.log('Save error:',e);}
+}
+function debounceSave(){clearTimeout(saveTimer);saveTimer=setTimeout(saveState,800);}
+
+async function loadState(){
+  try{
+    if(typeof window.storage==='undefined')return false;
+    const result=await window.storage.get(STORAGE_KEY);
+    if(result&&result.value){
+      const loaded=JSON.parse(result.value);
+      state={...defaultState(),...loaded,
+        prog:{...defaultState().prog,...(loaded.prog||{})},
+        after:{...defaultState().after,...(loaded.after||{})}
+      };
+      state.openWeeks=new Set(loaded.openWeeks||[]);
+      state.promptsExpanded=new Set(loaded.promptsExpanded||[]);
+      state.weeks=state.weeks.map(w=>({...emptyWeek(),...w}));
+      showSaveStatus('✦ Blueprint restored');
+      return true;
+    }
+  }catch(e){console.log('Load error:',e);}
+  return false;
+}
+
+function showSaveStatus(msg){
+  const el=document.getElementById('save-status');
+  if(!el)return;el.textContent=msg;el.style.opacity='1';
+  setTimeout(()=>{el.style.opacity='0';},2200);
+}
+
+// ── Helpers ──
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function autoAssign(){
   if(!state.usePhases)return;
   const{duration,phaseCount}=state.prog;
   const b=Math.floor(duration/phaseCount),r=duration%phaseCount;
-  const sz=[];for(let i=0;i<phaseCount;i++)sz.push(b+(i<r?1:0));
   let pi=0,wi=0;
-  state.weeks.forEach(w=>{if(wi>=sz[pi]&&pi<phaseCount-1){pi++;wi=0;}wi++;w.phase=pi;});
+  state.weeks.forEach(w=>{const sz=b+(pi<r?1:0);if(wi>=sz&&pi<phaseCount-1){pi++;wi=0;}wi++;w.phase=pi;});
 }
-
 function ranges(){
   const{duration,phaseCount}=state.prog;
   const b=Math.floor(duration/phaseCount),r=duration%phaseCount;
   let out=[],s=1;
-  for(let i=0;i<phaseCount;i++){const c=b+(i<r?1:0);out.push(`${s}–${s+c-1}`);s+=c;}
+  for(let i=0;i<phaseCount;i++){const c=b+(i<r?1:0);out.push(`${s}\u2013${s+c-1}`);s+=c;}
   return out;
 }
-
 function syncWeeks(){
   const d=state.prog.duration-state.weeks.length;
   if(d>0)for(let i=0;i<d;i++)state.weeks.push(emptyWeek());
   else if(d<0)state.weeks.splice(state.prog.duration);
   autoAssign();
 }
-
 function syncPhases(){
   if(!state.usePhases)return;
   const d=state.prog.phaseCount-state.phases.length;
@@ -201,36 +347,55 @@ function syncPhases(){
   else if(d<0)state.phases.splice(state.prog.phaseCount);
   autoAssign();
 }
-
 function visSteps(){return state.usePhases?ALL_STEPS:ALL_STEPS.filter(s=>s!=="Phases");}
-function visIdx(){return state.usePhases?[0,1,2,3]:[0,2,3];}
+function visIdx(){return state.usePhases?[0,1,2,3,4]:[0,2,3,4];}
+function tagHTML(items,activeList,color,clickFn){
+  return items.map(m=>{
+    const a=activeList.includes(m);
+    return`<button class="tag${a?' active':''}" style="${a?`border-color:${color};background:${color}`:''}" onclick="${clickFn}('${m.replace(/'/g,"\\'")}')">${m}</button>`;
+  }).join('');
+}
 
+// ── Navigation ──
 function goNext(){
-  if(!state.usePhases&&state.step===0)state.step=2;
-  else if(!state.usePhases&&state.step===2)state.step=3;
-  else state.step=Math.min(3,state.step+1);
+  saveInputs();
+  const vi=visIdx();const ci=vi.indexOf(state.step);
+  if(ci<vi.length-1)state.step=vi[ci+1];
   render();
 }
 function goBack(){
-  if(!state.usePhases&&state.step===2)state.step=0;
-  else if(!state.usePhases&&state.step===3)state.step=2;
-  else state.step=Math.max(0,state.step-1);
+  saveInputs();
+  const vi=visIdx();const ci=vi.indexOf(state.step);
+  if(ci>0)state.step=vi[ci-1];
   render();
 }
-function goStep(i){state.step=i;render();}
+function goStep(i){saveInputs();state.step=i;render();}
 
 function clearAll(){
-  state={step:0,usePhases:true,
-    prog:{name:"",transformation:"",targetClient:"",duration:5,phaseCount:3},
-    phases:[{name:"",intention:""},{name:"",intention:""},{name:"",intention:""}],
-    weeks:Array.from({length:5},()=>emptyWeek()),
-    after:{nextOffer:"",bridge:"",integration:""},
-    openWeeks:new Set(),
-  };render();
+  if(!confirm('Clear all blueprint data? This cannot be undone.'))return;
+  state=defaultState();state.openWeeks=new Set();state.promptsExpanded=new Set();
+  debounceSave();render();
 }
 
-function h(tag,cls,html){return`<${tag}${cls?` class="${cls}"`:''}>${html||''}</${tag}>`;}
+// ── Field Helpers ──
+function fieldHTML(id,label,val,ph,multi,guide){
+  let html=`<div class="field">`;
+  html+=`<label>${label}</label>`;
+  if(guide)html+=`<span class="field-guide">${guide}</span>`;
+  if(multi)html+=`<textarea id="${id}" placeholder="${ph}">${val||''}</textarea>`;
+  else html+=`<input type="text" id="${id}" value="${esc(val)}" placeholder="${ph}">`;
+  html+=`</div>`;
+  return html;
+}
+function fieldSmHTML(id,label,val,ph,multi){
+  let html=`<div class="field field-sm"><label>${label}</label>`;
+  if(multi)html+=`<textarea id="${id}" placeholder="${ph}">${val||''}</textarea>`;
+  else html+=`<input type="text" id="${id}" value="${esc(val)}" placeholder="${ph}">`;
+  html+=`</div>`;
+  return html;
+}
 
+// ── Render Steps ──
 function renderSteps(){
   const vs=visSteps(),vi=visIdx();
   document.getElementById('steps').innerHTML=vs.map((s,i)=>{
@@ -240,58 +405,76 @@ function renderSteps(){
   }).join('');
 }
 
-function fieldHTML(id,label,val,ph,multi){
-  const tag=multi?`<textarea id="${id}" placeholder="${ph}" onfocus="this.style.borderColor='var(--sage)'" onblur="this.style.borderColor='var(--stone)'">${val}</textarea>`
-    :`<input type="text" id="${id}" value="${esc(val)}" placeholder="${ph}" onfocus="this.style.borderColor='var(--sage)'" onblur="this.style.borderColor='var(--stone)'">`;
-  return`<div class="field"><label>${label}</label>${tag}</div>`;
-}
-
-function esc(s){return s.replace(/"/g,'&quot;').replace(/</g,'&lt;');}
-
-function tagHTML(items,activeList,color,clickFn){
-  return items.map(m=>{
-    const a=activeList.includes(m);
-    return`<button class="tag${a?' active':''}" style="${a?`border-color:${color};background:${color}`:''}" onclick="${clickFn}('${m.replace(/'/g,"\\'")}')">${m}</button>`;
-  }).join('');
-}
-
+// ── Foundation ──
 function renderFoundation(){
   const p=state.prog;
-  let html=`<div class="sec-head"><h2>Program Foundation</h2><p>Define the container before you fill it.</p></div>`;
-  html+=fieldHTML('prog-name','Program Name',p.name,'What is this program called?');
-  html+=fieldHTML('prog-transform','The Big Transformation',p.transformation,'Where does your client start, and where do they land by the end?',true);
-  html+=fieldHTML('prog-target','Who Is This For?',p.targetClient,'Describe your ideal client for this program...',true);
-  html+=`<div class="field"><label>Program Duration — ${p.duration} weeks</label>
+  let html=`<div class="sec-head"><h2>Program Foundation</h2><p>Define the transformation before you design the container.</p></div>`;
+
+  // Program Name at top
+  html+=`<div class="field"><label>Your Program Name <span class="optional-badge">Optional</span></label>
+    <span class="field-guide">The name of this specific program or offer. Don't have one yet? Use the 'Program Name Brainstorm' prompt in your library first.</span>
+    <input type="text" id="prog-name" value="${esc(p.name)}" placeholder="e.g. The Offer Message Forge, Sacred Method Intensive..."></div>`;
+
+  // Method Name
+  html+=`<div class="field"><label>Your Signature Method <span class="optional-badge">Optional</span></label>
+    <span class="field-guide">The named method that lives inside your program. One method can power many programs.</span>
+    <input type="text" id="prog-method" value="${esc(p.methodName)}" placeholder="e.g. The Embodied Channel Process, The Aligned Offer Method..."></div>`;
+
+  html+=fieldHTML('prog-client','Your Ideal Client',p.idealClient,'','true',
+    "Be specific. Not 'women who want healing' \u2014 who exactly?");
+  html+=fieldHTML('prog-before','The Before-State',p.beforeState,'','true',
+    "What is your client experiencing before they find you? Make it visceral.");
+  html+=fieldHTML('prog-after','The After-State',p.afterState,'','true',
+    "What does life look like after the shift? Be sensory and specific.");
+  html+=fieldHTML('prog-experience','The Program Experience',p.programExperience,'','true',
+    "What does it feel like to be inside your program? What happens?");
+  html+=fieldHTML('prog-shift','The Core Shift',p.coreShift,'','true',
+    "The single most important change your program creates.");
+
+  // Tone
+  html+=`<div class="field"><label>Your Energetic Tone</label>
+    <span class="field-guide">This shapes how every generated prompt sounds. Pick the one that feels most like your brand.</span>
+    <div class="tone-grid">`;
+  TONES.forEach(t=>{
+    const ac=p.tone===t.id;
+    html+=`<button class="tone-btn${ac?' active':''}" onclick="setTone('${t.id}')">
+      <span class="tone-icon">${t.icon}</span><span class="tone-name">${t.label}</span></button>`;
+  });
+  html+=`</div></div>`;
+
+  // Duration + Phases
+  html+=`<div style="background:rgba(250,250,247,0.5);border-radius:8px;padding:16px;margin-bottom:16px">`;
+  html+=`<div class="field field-sm"><label>Program Duration \u2014 ${p.duration} weeks</label>
     <input type="range" min="3" max="12" value="${p.duration}" id="dur-slider" oninput="setDuration(this.value)">
     <div class="range-labels"><span>3 weeks</span><span>12 weeks</span></div></div>`;
-  html+=`<div style="background:rgba(250,250,247,0.5);border-radius:8px;padding:16px;margin-bottom:16px">
-    <div class="toggle-row"><span class="toggle-label">Use Phases to Group Weeks?</span>
+  html+=`<div class="toggle-row"><span class="toggle-label">Use Phases to Group Weeks?</span>
     <button class="toggle ${state.usePhases?'on':'off'}" onclick="togglePhases()"><div class="knob"></div></button></div>`;
   if(state.usePhases){
-    html+=`<div class="field"><label>Number of Phases — ${p.phaseCount}</label>
+    html+=`<div class="field field-sm"><label>Number of Phases \u2014 ${p.phaseCount}</label>
       <div class="phase-sel">${[2,3,4].map(n=>`<button class="${p.phaseCount===n?'active':'inactive'}" onclick="setPhaseCount(${n})">${n}</button>`).join('')}</div></div>`;
   }
   html+=`</div>`;
   return html;
 }
 
+// ── Phases ──
 function renderPhases(){
   const rs=ranges();
   let html=`<div class="sec-head"><h2>Phase Architecture</h2><p>Name the chapters of your client's journey.</p></div>`;
   state.phases.forEach((p,i)=>{
     const c=PCS[i%PCS.length];
     html+=`<div class="phase-card" style="border-left-color:${c}">
-      <div class="phase-label" style="color:${c}">Phase ${i+1} · Weeks ${rs[i]}</div>
-      ${fieldHTML(`phase-name-${i}`,'Phase Name',p.name,'e.g. Awakening, Foundation, Integration...')}
-      ${fieldHTML(`phase-int-${i}`,'Phase Intention',p.intention,'What is the overarching purpose of this phase?',true)}
+      <div class="phase-label" style="color:${c}">Phase ${i+1} \u00B7 Weeks ${rs[i]}</div>
+      ${fieldSmHTML(`phase-name-${i}`,'Phase Name',p.name,'e.g. Awakening, Foundation, Integration...')}
+      ${fieldSmHTML(`phase-int-${i}`,'Phase Intention',p.intention,'What is the overarching purpose of this phase?',true)}
     </div>`;
   });
   return html;
 }
 
+// ── Weekly Build ──
 function renderWeekly(){
   let html=`<div class="sec-head"><h2>Weekly Build</h2><p>Expand each week to map the modalities, transformation, format, and deliverables.</p></div>`;
-  // Pacing
   html+=`<div class="pacing"><div class="pacing-label">Pacing Overview</div><div class="pacing-bars">`;
   const ic={heavy:'var(--copper)',balanced:'var(--ochre)',integration:'var(--sage)'};
   state.weeks.forEach((w,i)=>{
@@ -300,7 +483,6 @@ function renderWeekly(){
     html+=`<div class="pacing-col"><div class="pacing-bar" style="height:${ht};background:${bg};opacity:${op}"></div><span class="pacing-wk">W${i+1}</span></div>`;
   });
   html+=`</div></div>`;
-  // Weeks
   state.weeks.forEach((w,i)=>{
     const pc=state.usePhases?PCS[w.phase%PCS.length]:'var(--sage)';
     const af=[...w.formats,...w.customFormats];
@@ -310,7 +492,7 @@ function renderWeekly(){
         <div class="week-top">
           <div class="week-title-area">
             <span class="week-num">Week ${i+1}</span>
-            ${w.title?`<span class="week-name">— ${esc(w.title)}</span>`:''}
+            ${w.title?`<span class="week-name">\u2014 ${esc(w.title)}</span>`:''}
           </div>
           <div class="week-badges">
             ${w.intensity?`<span style="font-size:12px">${INT.find(l=>l.id===w.intensity)?.icon||''}</span>`:''}
@@ -322,52 +504,41 @@ function renderWeekly(){
       </button>`;
     if(isOpen){
       html+=`<div class="week-body">`;
-      // Phase assign
       if(state.usePhases&&state.phases.length>1){
-        html+=`<div class="field"><label>Assign to Phase</label><div class="phase-assign">`;
+        html+=`<div class="field field-sm"><label>Assign to Phase</label><div class="phase-assign">`;
         state.phases.forEach((p,pi)=>{
           const ac=w.phase===pi;const c=PCS[pi%PCS.length];
           html+=`<button style="border:${ac?'2px':'1px'} solid ${ac?c:'var(--stone)'};background:${ac?c:'transparent'};color:${ac?'var(--cream)':'var(--forest)'};font-weight:${ac?600:400}" onclick="assignPhase(${i},${pi})">${esc(p.name)||'Phase '+(pi+1)}</button>`;
         });
         html+=`</div></div>`;
       }
-      html+=fieldHTML(`wk-title-${i}`,'Week Title',w.title,'e.g. Opening the Portal, Anchoring Your Method...');
-      // Transform
-      html+=`<div class="field"><label>Transformation Arc</label>
+      html+=fieldSmHTML(`wk-title-${i}`,'Week Title',w.title,'e.g. Opening the Portal, Anchoring Your Method...');
+      html+=`<div class="field field-sm"><label>Transformation Arc</label>
         <div class="transform-row">
-          <input type="text" id="wk-start-${i}" value="${esc(w.clientStart)}" placeholder="Client arrives feeling..." onchange="setWeekField(${i},'clientStart',this.value)">
-          <span class="transform-arrow">→</span>
-          <input type="text" id="wk-end-${i}" value="${esc(w.clientEnd)}" placeholder="Client leaves with..." onchange="setWeekField(${i},'clientEnd',this.value)">
+          <input type="text" id="wk-start-${i}" value="${esc(w.clientStart)}" placeholder="Client arrives feeling...">
+          <span class="transform-arrow">\u2192</span>
+          <input type="text" id="wk-end-${i}" value="${esc(w.clientEnd)}" placeholder="Client leaves with...">
         </div></div>`;
-      // Modalities
-      html+=`<div class="field"><label>Modalities Used</label><div class="tags">`;
+      html+=`<div class="field field-sm"><label>Modalities Used</label><div class="tags">`;
       html+=tagHTML(MODS,w.modalities,'var(--forest)',`toggleMod.bind(null,${i})`);
-      w.customModalities.forEach((m,ci)=>{
-        html+=`<button class="tag active" style="border-color:var(--copper);background:var(--copper)" onclick="removeCustomMod(${i},${ci})">${esc(m)}</button>`;
-      });
+      w.customModalities.forEach((m,ci)=>{html+=`<button class="tag active" style="border-color:var(--copper);background:var(--copper)" onclick="removeCustomMod(${i},${ci})">${esc(m)}</button>`;});
       html+=`</div><div class="adder"><input placeholder="+ Add custom modality (press Enter)" onkeydown="addCustomMod(event,${i})"></div></div>`;
-      // Formats
-      html+=`<div class="field"><label>Session Format</label><div class="tags">`;
+      html+=`<div class="field field-sm"><label>Session Format</label><div class="tags">`;
       html+=tagHTML(FMTS,w.formats,'var(--sage)',`toggleFmt.bind(null,${i})`);
-      w.customFormats.forEach((f,ci)=>{
-        html+=`<button class="tag active" style="border-color:var(--copper);background:var(--copper)" onclick="removeCustomFmt(${i},${ci})">${esc(f)}</button>`;
-      });
+      w.customFormats.forEach((f,ci)=>{html+=`<button class="tag active" style="border-color:var(--copper);background:var(--copper)" onclick="removeCustomFmt(${i},${ci})">${esc(f)}</button>`;});
       html+=`</div><div class="adder"><input placeholder="+ Add custom format (press Enter)" onkeydown="addCustomFmt(event,${i})"></div></div>`;
-      // Intensity
-      html+=`<div class="field"><label>Intensity Level</label><div class="intensity-row">`;
+      html+=`<div class="field field-sm"><label>Intensity Level</label><div class="intensity-row">`;
       INT.forEach(l=>{
         const ac=w.intensity===l.id;
         html+=`<button class="intensity-btn ${ac?'active':'inactive'}" onclick="setIntensity(${i},'${l.id}')">
           <div class="intensity-icon">${l.icon}</div><div class="intensity-label">${l.label}</div></button>`;
       });
       html+=`</div></div>`;
-      // Deliverables
-      html+=fieldHTML(`wk-del-${i}`,'Client Deliverables',w.deliverables,'What does the client walk away with?',true);
-      // Prompts
+      html+=fieldSmHTML(`wk-del-${i}`,'Client Deliverables',w.deliverables,'What does the client walk away with?',true);
       html+=`<div class="prompts-box"><div class="prompts-head">✦ Transformation Prompts</div>
-        ${fieldHTML(`wk-cq-${i}`,'What is the core question this week answers?',w.coreQuestion,'e.g. How do I trust what I\'m receiving?')}
-        ${fieldHTML(`wk-rel-${i}`,'What belief or pattern is being released?',w.releasing,'e.g. The belief that intuition isn\'t reliable enough')}
-        ${fieldHTML(`wk-act-${i}`,'What new capacity is being activated?',w.activating,'e.g. Confidence to name and claim their unique reading style')}
+        ${fieldSmHTML(`wk-cq-${i}`,'What is the core question this week answers?',w.coreQuestion,"e.g. How do I trust what I'm receiving?")}
+        ${fieldSmHTML(`wk-rel-${i}`,'What belief or pattern is being released?',w.releasing,"e.g. The belief that intuition isn't reliable enough")}
+        ${fieldSmHTML(`wk-act-${i}`,'What new capacity is being activated?',w.activating,'e.g. Confidence to name and claim their unique reading style')}
       </div>`;
       html+=`</div>`;
     }
@@ -376,31 +547,41 @@ function renderWeekly(){
   return html;
 }
 
+// ── The After ──
 function renderAfter(){
   const a=state.after;
   let html=`<div class="sec-head"><h2>The After</h2><p>Where does the momentum carry them after the final week?</p></div>`;
-  html+=fieldHTML('after-next',"What's the natural next offer or container?",a.nextOffer,'e.g. A membership, a 1:1 package, a mastermind...',true);
-  html+=fieldHTML('after-bridge','How will you bridge them there?',a.bridge,'A call, an email sequence, a special offer?',true);
-  html+=fieldHTML('after-int','Integration Period',a.integration,'Post-program integration window? Community access?',true);
+  html+=fieldSmHTML('after-next',"What's the natural next offer or container?",a.nextOffer,'e.g. A membership, a 1:1 package, a mastermind...',true);
+  html+=fieldSmHTML('after-bridge','How will you bridge them there?',a.bridge,'A call, an email sequence, a special offer?',true);
+  html+=fieldSmHTML('after-int','Integration Period',a.integration,'Post-program integration window? Community access?',true);
   // Snapshot
-  html+=`<div class="snapshot"><div class="snap-header">
+  html+=renderSnapshot();
+  return html;
+}
+
+function renderSnapshot(){
+  let html=`<div class="snapshot"><div class="snap-header">
     <div class="snap-title">✦ Program Blueprint</div>
     <button class="copy-btn" id="copy-btn" onclick="copySnap()">Copy to Clipboard</button></div>`;
-  if(state.prog.name)html+=`<div class="snap-name">${esc(state.prog.name)}</div>`;
-  if(state.prog.transformation)html+=`<div class="snap-transform">"${esc(state.prog.transformation)}"</div>`;
-  if(state.prog.targetClient)html+=`<div class="snap-for">For: ${esc(state.prog.targetClient)}</div>`;
-  let meta=`<strong>${state.prog.duration} weeks</strong>`;
+  const p=state.prog;
+  if(p.name)html+=`<div class="snap-name">${esc(p.name)}</div>`;
+  if(p.methodName)html+=`<div style="font-family:var(--accent);font-style:italic;font-size:13px;color:var(--sage);margin-bottom:6px">Powered by ${esc(p.methodName)}</div>`;
+  if(p.beforeState&&p.afterState)html+=`<div class="snap-transform">From "${esc(p.beforeState)}" to "${esc(p.afterState)}"</div>`;
+  else if(p.coreShift)html+=`<div class="snap-transform">"${esc(p.coreShift)}"</div>`;
+  if(p.idealClient)html+=`<div class="snap-for">For: ${esc(p.idealClient)}</div>`;
+  let meta=`<strong>${p.duration} weeks</strong>`;
   if(state.usePhases){
-    meta+=` · ${state.prog.phaseCount} phases`;
-    const pn=state.phases.filter(p=>p.name).map(p=>p.name);
-    if(pn.length)meta+=` · ${pn.map(esc).join(' → ')}`;
+    meta+=` \u00B7 ${p.phaseCount} phases`;
+    const pn=state.phases.filter(x=>x.name).map(x=>x.name);
+    if(pn.length)meta+=` \u00B7 ${pn.map(esc).join(' \u2192 ')}`;
   }
+  if(p.tone)meta+=` \u00B7 ${p.tone}`;
   html+=`<div class="snap-meta">${meta}</div>`;
-  if(state.usePhases&&state.phases.some(p=>p.intention)){
+  if(state.usePhases&&state.phases.some(x=>x.intention)){
     html+=`<div style="margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(212,207,199,0.4)">`;
-    state.phases.filter(p=>p.name||p.intention).forEach((p,i)=>{
-      html+=`<div style="margin-bottom:4px"><span style="font-family:var(--body);font-size:11px;font-weight:600;color:${PCS[i%PCS.length]};text-transform:uppercase;letter-spacing:0.5px">${esc(p.name)||'Phase '+(i+1)}</span>`;
-      if(p.intention)html+=`<span style="font-family:var(--body);font-size:12px;color:var(--forest);margin-left:8px">— ${esc(p.intention)}</span>`;
+    state.phases.filter(x=>x.name||x.intention).forEach((x,i)=>{
+      html+=`<div style="margin-bottom:4px"><span style="font-family:var(--body);font-size:11px;font-weight:600;color:${PCS[i%PCS.length]};text-transform:uppercase;letter-spacing:0.5px">${esc(x.name)||'Phase '+(i+1)}</span>`;
+      if(x.intention)html+=`<span style="font-family:var(--body);font-size:12px;color:var(--forest);margin-left:8px">\u2014 ${esc(x.intention)}</span>`;
       html+=`</div>`;
     });
     html+=`</div>`;
@@ -408,8 +589,8 @@ function renderAfter(){
   state.weeks.forEach((w,i)=>{
     const am=[...w.modalities,...w.customModalities];
     const af=[...w.formats,...w.customFormats];
-    const has=w.title||w.clientStart||w.clientEnd||am.length||af.length||w.deliverables||w.coreQuestion||w.releasing||w.activating;
     const pc=state.usePhases?PCS[w.phase%PCS.length]:'var(--sage)';
+    const has=w.title||w.clientStart||w.clientEnd||am.length||af.length||w.deliverables||w.coreQuestion;
     html+=`<div class="snap-week"><div class="snap-week-top"><div>
       <span class="snap-wk-num">Week ${i+1}</span>
       ${w.title?`<span class="snap-wk-title">${esc(w.title)}</span>`:''}
@@ -417,7 +598,7 @@ function renderAfter(){
       ${w.intensity?`<span style="font-size:12px">${INT.find(l=>l.id===w.intensity)?.icon||''}</span>`:''}
       ${state.usePhases&&state.phases[w.phase]?.name?`<span class="phase-badge" style="background:${pc};font-size:9px">${esc(state.phases[w.phase].name)}</span>`:''}
     </div></div>`;
-    if(w.clientStart||w.clientEnd)html+=`<div class="snap-info"><span class="snap-info-label">Transformation: </span>${esc(w.clientStart)}${w.clientStart&&w.clientEnd?' <span style="color:var(--copper)">→</span> ':''}${esc(w.clientEnd)}</div>`;
+    if(w.clientStart||w.clientEnd)html+=`<div class="snap-info"><span class="snap-info-label">Transformation: </span>${esc(w.clientStart)}${w.clientStart&&w.clientEnd?' <span style="color:var(--copper)">\u2192</span> ':''}${esc(w.clientEnd)}</div>`;
     if(am.length)html+=`<div class="snap-info"><span class="snap-info-label">Modalities: </span>${am.map(esc).join(', ')}</div>`;
     if(af.length)html+=`<div class="snap-info"><span class="snap-info-label">Format: </span>${af.map(esc).join(', ')}</div>`;
     if(w.deliverables)html+=`<div class="snap-info"><span class="snap-info-label">Deliverables: </span>${esc(w.deliverables)}</div>`;
@@ -431,6 +612,7 @@ function renderAfter(){
     if(!has)html+=`<div class="snap-unmapped">(not yet mapped)</div>`;
     html+=`</div>`;
   });
+  const a=state.after;
   if(a.nextOffer||a.bridge||a.integration){
     html+=`<div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(212,207,199,0.4)">
       <div style="font-family:var(--head);font-size:15px;color:var(--forest);margin-bottom:8px;letter-spacing:0.5px">✦ The After</div>`;
@@ -443,20 +625,218 @@ function renderAfter(){
   return html;
 }
 
+// ── Prompt Library Page (template-based, no API) ──
+function buildPromptLibrary(){
+  const p=state.prog;
+  const name=p.name||'[your program name]';
+  const method=p.methodName||'[your signature method]';
+  const client=p.idealClient||'[your ideal client]';
+  const before=p.beforeState||'[before-state]';
+  const after=p.afterState||'[after-state]';
+  const experience=p.programExperience||'[program experience]';
+  const shift=p.coreShift||'[core shift]';
+  const tone=p.tone||'grounded';
+  const dur=p.duration;
+
+  return [
+    {name:"Foundation",description:"Start here: name your method, then build your messaging from it",items:[
+      {title:"Program Name Brainstorm",type:"START HERE",content:
+`I'm building a ${dur}-week program for this specific person:\n${client}\n\nThe core shift my program creates:\n${shift}\n\nMy signature method is called: ${method}\nMy energetic tone is: ${tone}\n\nBrainstorm 5 program name directions that capture this transformation. For each, give the name and a one-sentence rationale for why it works. The names should feel aligned with the tone, not corporate or generic. Think transformation verbs + evocative concepts.`},
+    ]},
+    {name:"Transformation Messaging",description:"For the days you talk about what shifts inside your client",items:[
+      {title:'"What Does Your Program Do?" Answer',type:"QUICK WIN",content:
+`Based on these program details, write 3 versions of a clear 2-sentence answer I can use when someone asks "what does your program do?"\n\nProgram: ${name}\nSignature Method: ${method}\nIdeal Client: ${client}\nBefore-State: ${before}\nAfter-State: ${after}\nCore Shift: ${shift}\nTone: ${tone}\n\nEach version should feel conversational, specific, and like something I'd actually say out loud. No jargon. No em dashes.`},
+      {title:"Before/After Shift Statements",type:"QUICK WIN",content:
+`Write 5 before/after transformation statements for my program.\n\nBefore-State: ${before}\nAfter-State: ${after}\nCore Shift: ${shift}\nTone: ${tone}\n\nFormat each as: "From [specific before experience] to [specific after experience]"\n\nMake them visceral and specific, not vague. Use the language my client would actually use, not coaching jargon.`},
+      {title:"Client-Language Transformation Statements",type:"QUICK WIN",content:
+`Write 5 statements in the voice of someone who just completed my program, as if they were texting a friend about it.\n\nWhat they experienced before: ${before}\nWhat they experience after: ${after}\nWhat the program felt like: ${experience}\nThe core shift: ${shift}\n\nMake these sound real, not testimonial-polished. Like an actual text message. Casual, specific, genuine.`},
+    ]},
+    {name:"Visibility Copy",description:"For the days you step out and let people see what you built",items:[
+      {title:"Short Bio Blurb",type:"QUICK WIN",content:
+`Here is my program and brand context:\n\nProgram: ${name}\nSignature Method: ${method}\nI help: ${client}\nBefore-State: ${before}\nAfter-State: ${after}\nCore Shift: ${shift}\nTone: ${tone}\n\nWrite 3 versions of a short bio using this exact 4-line framework. This is for an Instagram bio so the TOTAL must be under 150 characters including emojis and spaces. Count the characters for each version and confirm each is under 150.\n\nFramework:\nLine 1: Emoji + Who I help and how\nLine 2: Emoji + Credibility or proof (what gives me authority)\nLine 3: Emoji + What makes me different (my method name or unique angle)\nLine 4: Emoji + FREE [name of freebie, lead magnet, or session] 👇\n\nRules:\n- Every line MUST start with an emoji (✦ 🔮 🌙 💫 🔥 ⚡ 🌿 ✨ 🔑 💎 or similar, match my tone)\n- Each line should be a clear, readable mini-statement that my ideal client would immediately understand. Not cryptic fragments. Not full sentences either. Think the way real Instagram bios read: conversational, scannable, and clear at a glance.\n- Example of TOO compressed (bad): "🔥 Spiritual coaches, clearly named" — this means nothing to a reader\n- Example of JUST RIGHT (good): "🔥 Helping spiritual coaches name their method" — clear, specific, scannable\n- Do NOT start any line with "I" — lead with the value, the client, or the method\n- The CTA line (Line 4) must name a specific free offer and end with 👇 to point to the link\n- Example CTA: "✨ FREE Sacred Vision Activation 👇" or "🔮 Free Tarot Clarity Session 👇"\n- The freebie/session name should sound like a real offer my ideal client would want, not a generic placeholder\n- Make each version feel activated\n\nAfter writing all 3 versions, list the character count for each one. If any version exceeds 150 characters, rewrite it shorter.`},
+      {title:"Signature Program Description",type:"DEEPER PIECE",content:
+`Write a 4-6 sentence program description I can use on a sales page or landing page.\n\nProgram: ${name} (${dur} weeks)\nSignature Method: ${method}\nIdeal Client: ${client}\nBefore-State: ${before}\nAfter-State: ${after}\nProgram Experience: ${experience}\nCore Shift: ${shift}\nTone: ${tone}\n\nLead with the transformation, not the logistics. Make it feel like an invitation, not a pitch. No em dashes. No negation framing ("this isn't your typical..."). If the method name is provided, weave it in naturally.`},
+    ]},
+    {name:"Sales & Promo",description:"For the days you invite people in",items:[
+      {title:"Promo Caption Prompts",type:"DEEPER PIECE",content:
+`Write 3 social media caption frameworks I can use to promote my program.\n\nProgram: ${name}\nMethod: ${method}\nIdeal Client: ${client}\nBefore-State: ${before}\nAfter-State: ${after}\nCore Shift: ${shift}\nTone: ${tone}\n\nEach caption should have:\n1. A hook (first line that stops the scroll)\n2. A body (the story or insight, 3-5 sentences)\n3. A CTA (clear next step)\n\nWrite in my tone. No em dashes. Use line breaks for readability.`},
+      {title:"Sales Page Section Prompts",type:"DEEPER PIECE",content:
+`Write the key sections for a simple sales page for my program.\n\nProgram: ${name} (${dur} weeks)\nMethod: ${method}\nIdeal Client: ${client}\nBefore-State: ${before}\nAfter-State: ${after}\nProgram Experience: ${experience}\nCore Shift: ${shift}\nTone: ${tone}\n\nGenerate:\n- A headline\n- A subheadline\n- 3 bullet points of what they'll walk away with\n- A closing CTA paragraph\n\nLead with transformation, not features. No em dashes. No negation framing. Make it feel like a sacred invitation, not a hard sell.`},
+    ]},
+    {name:"Ongoing Tools",description:"Copy you can return to and reuse",items:[
+      {title:"Objection Responses",type:"ONGOING TOOL",content:
+`Write warm, grounded responses to these 4 common objections about my program.\n\nProgram: ${name} (${dur} weeks)\nIdeal Client: ${client}\nCore Shift: ${shift}\nTone: ${tone}\n\nObjections to address:\n1. "I can't afford it right now"\n2. "I'm not sure it's the right time"\n3. "How is this different from other programs?"\n4. "I need to think about it"\n\nEach response should be 2-3 sentences. Empathetic, not pushy. Honor their process while gently reframing. No manipulation tactics.`},
+      {title:"Community Copy",type:"ONGOING TOOL",content:
+`Write 3 community posts for my program's Skool or Circle community.\n\nProgram: ${name}\nMethod: ${method}\nIdeal Client: ${client}\nCore Shift: ${shift}\nTone: ${tone}\n\nWrite:\n1. A welcome post (for when new members join)\n2. A weekly check-in prompt (to spark engagement and reflection)\n3. A celebration/wins prompt (to invite people to share their progress)\n\nKeep them warm, specific to the transformation, and written in my tone. No em dashes.`},
+    ]},
+  ];
+}
+
+function renderPromptLib(){
+  const p=state.prog;
+  const hasEnough=p.idealClient&&p.beforeState&&p.afterState&&p.coreShift;
+  let html=`<div class="sec-head"><h2>Prompt Library</h2><p>Ready-to-use prompts built from your program details. Expand any card, copy the prompt, and drop it into your AI of choice.</p></div>`;
+
+  if(!hasEnough){
+    html+=`<div style="text-align:center;padding:30px 20px;background:rgba(17,50,40,0.04);border-radius:8px;">
+      <div style="font-family:var(--head);font-size:18px;color:var(--forest);margin-bottom:8px">Fill in your Foundation first</div>
+      <div style="font-family:var(--body);font-size:13px;color:var(--brown)">Your Ideal Client, Before-State, After-State, and Core Shift are needed to build your prompts.</div>
+      <button class="nav-btn nav-next" onclick="goStep(0)" style="margin-top:16px">Go to Foundation</button>
+    </div>`;
+    return html;
+  }
+
+  const library=buildPromptLibrary();
+  library.forEach((cat,ci)=>{
+    html+=`<div class="pl-category">
+      <div class="pl-cat-head">${esc(cat.name)}</div>
+      <div class="pl-cat-desc">${esc(cat.description)}</div>`;
+    cat.items.forEach((item,ii)=>{
+      const key=`${ci}-${ii}`;
+      const isOpen=state.promptsExpanded.has(key);
+      const typeClass=item.type==='START HERE'?'start':item.type==='DEEPER PIECE'?'deep':item.type==='ONGOING TOOL'?'ongoing':'';
+      html+=`<div class="pl-card">
+        <button class="pl-card-header" onclick="togglePromptCard('${key}')">
+          <div class="pl-card-left">
+            <span class="pl-card-title">${esc(item.title)}</span>
+            <span class="pl-card-type ${typeClass}">${esc(item.type)}</span>
+          </div>
+          <span class="pl-card-plus${isOpen?' open':''}">+</span>
+        </button>`;
+      if(isOpen){
+        html+=`<div class="pl-card-body">
+          <div class="pl-prompt-block">${esc(item.content).replace(/\n/g,'<br>')}</div>
+          <button class="pl-card-copy" id="plcopy-${key}" onclick="copyPrompt('${key}',${ci},${ii})">📋 Copy Prompt</button>
+        </div>`;
+      }
+      html+=`</div>`;
+    });
+    html+=`</div>`;
+  });
+
+  html+=`<div style="margin-top:24px">`;
+  html+=`<button class="gen-btn" onclick="copyAllPrompts()">Copy All Prompts <span class="gen-arrow">\u2192</span></button>`;
+  html+=`<div style="height:10px"></div>`;
+  html+=`<button class="copy-all-btn" id="copy-all-btn" onclick="copyAllDetails()">📋 Copy All Program Details</button>`;
+  html+=`<div class="gen-note" style="margin-top:4px">Paste into your Google Doc, Notion, or Skool group for safekeeping</div>`;
+  html+=`</div>`;
+  return html;
+}
+
+function togglePromptCard(key){
+  if(state.promptsExpanded.has(key))state.promptsExpanded.delete(key);
+  else state.promptsExpanded.add(key);
+  render();
+}
+
+function copyPrompt(key,ci,ii){
+  const library=buildPromptLibrary();
+  const item=library[ci]?.items[ii];
+  if(!item)return;
+  navigator.clipboard.writeText(item.content).then(()=>{
+    const btn=document.getElementById('plcopy-'+key);
+    if(btn){btn.textContent='✓ Copied!';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='📋 Copy Prompt';btn.classList.remove('copied');},2000);}
+  });
+}
+
+function copyAllPrompts(){
+  const library=buildPromptLibrary();
+  let t='✦ SIGNATURE PROGRAM PROMPT LIBRARY\n';
+  t+='Drop any of these prompts into your AI of choice.\n';
+  t+='━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n';
+  library.forEach(cat=>{
+    t+=`\n${'═'.repeat(40)}\n${cat.name.toUpperCase()}\n${cat.description}\n${'═'.repeat(40)}\n\n`;
+    cat.items.forEach(item=>{
+      t+=`── ${item.title} [${item.type}] ──\n\n${item.content}\n\n`;
+    });
+  });
+  navigator.clipboard.writeText(t).then(()=>{
+    const btns=document.querySelectorAll('.gen-btn');
+    btns.forEach(btn=>{if(btn.textContent.includes('Copy All')){
+      btn.innerHTML='✓ All Prompts Copied!';
+      setTimeout(()=>{btn.innerHTML='Copy All Prompts <span class="gen-arrow">\u2192</span>';},2000);
+    }});
+  });
+}
+
+// ── Copy All Details ──
+function copyAllDetails(){
+  saveInputs();
+  const p=state.prog;
+  let t=`✦ SIGNATURE PROGRAM BLUEPRINT\n\n`;
+  if(p.name)t+=`PROGRAM NAME: ${p.name}\n\n`;
+  if(p.methodName)t+=`SIGNATURE METHOD: ${p.methodName}\n\n`;
+  if(p.idealClient)t+=`IDEAL CLIENT:\n${p.idealClient}\n\n`;
+  if(p.beforeState)t+=`THE BEFORE-STATE:\n${p.beforeState}\n\n`;
+  if(p.afterState)t+=`THE AFTER-STATE:\n${p.afterState}\n\n`;
+  if(p.programExperience)t+=`THE PROGRAM EXPERIENCE:\n${p.programExperience}\n\n`;
+  if(p.coreShift)t+=`THE CORE SHIFT:\n${p.coreShift}\n\n`;
+  if(p.tone)t+=`ENERGETIC TONE: ${p.tone}\n`;
+  t+=`DURATION: ${p.duration} weeks\n`;
+  if(state.usePhases){
+    t+=`PHASES: ${p.phaseCount}\n`;
+    const pn=state.phases.filter(x=>x.name);
+    if(pn.length){t+=`\n--- PHASES ---\n`;pn.forEach((x,i)=>{t+=`Phase ${i+1}: ${x.name}`;if(x.intention)t+=` \u2014 ${x.intention}`;t+=`\n`;});}
+  }
+  t+=`\n--- WEEKLY BREAKDOWN ---\n`;
+  state.weeks.forEach((w,i)=>{
+    t+=`\nWEEK ${i+1}`;if(w.title)t+=`: ${w.title}`;
+    if(w.intensity)t+=` [${INT.find(l=>l.id===w.intensity)?.label}]`;
+    if(state.usePhases&&state.phases[w.phase]?.name)t+=` (${state.phases[w.phase].name})`;t+=`\n`;
+    if(w.clientStart||w.clientEnd)t+=`  Transformation: ${w.clientStart||'...'} \u2192 ${w.clientEnd||'...'}\n`;
+    const am=[...w.modalities,...w.customModalities];if(am.length)t+=`  Modalities: ${am.join(', ')}\n`;
+    const af=[...w.formats,...w.customFormats];if(af.length)t+=`  Format: ${af.join(', ')}\n`;
+    if(w.deliverables)t+=`  Deliverables: ${w.deliverables}\n`;
+    if(w.coreQuestion)t+=`  Core Question: ${w.coreQuestion}\n`;
+    if(w.releasing)t+=`  Releasing: ${w.releasing}\n`;
+    if(w.activating)t+=`  Activating: ${w.activating}\n`;
+  });
+  const a=state.after;
+  if(a.nextOffer||a.bridge||a.integration){
+    t+=`\n--- THE AFTER ---\n`;
+    if(a.nextOffer)t+=`Next Offer: ${a.nextOffer}\n`;
+    if(a.bridge)t+=`Bridge: ${a.bridge}\n`;
+    if(a.integration)t+=`Integration: ${a.integration}\n`;
+  }
+  navigator.clipboard.writeText(t).then(()=>{
+    const btn=document.getElementById('copy-all-btn');
+    btn.innerHTML='✓ Copied!';btn.classList.add('copied');
+    setTimeout(()=>{btn.innerHTML='📋 Copy All Program Details';btn.classList.remove('copied');},2000);
+  });
+}
+
+// ── Copy Snapshot (from The After page) ──
+function copySnap(){
+  saveInputs();
+  copyAllDetails();
+  const btn=document.getElementById('copy-btn');
+  if(btn){btn.textContent='✓ Copied!';btn.classList.add('copied');
+  setTimeout(()=>{btn.textContent='Copy to Clipboard';btn.classList.remove('copied');},2000);}
+}
+
+// ── Nav ──
 function renderNav(){
+  const vi=visIdx();const ci=vi.indexOf(state.step);
   return`<div class="nav-row">
-    <button class="nav-btn nav-back" onclick="goBack()"${state.step===0?' disabled':''}>← Back</button>
+    <button class="nav-btn nav-back" onclick="goBack()"${ci===0?' disabled':''}>← Back</button>
     <button class="clear-btn" onclick="clearAll()">Clear All</button>
-    <button class="nav-btn nav-next" onclick="goNext()"${state.step===3?' disabled':''}>Next →</button>
+    <button class="nav-btn nav-next" onclick="goNext()"${ci===vi.length-1?' disabled':''}>Next →</button>
   </div>`;
 }
 
+// ── Save Inputs ──
 function saveInputs(){
   const g=(id)=>{const e=document.getElementById(id);return e?(e.tagName==='TEXTAREA'?e.value:e.value):null;};
   if(state.step===0){
+    const v=k=>{const x=g(k);if(x!==null)return x;return undefined;};
     const n=g('prog-name');if(n!==null)state.prog.name=n;
-    const t=g('prog-transform');if(t!==null)state.prog.transformation=t;
-    const c=g('prog-target');if(c!==null)state.prog.targetClient=c;
+    const mn=g('prog-method');if(mn!==null)state.prog.methodName=mn;
+    const c=g('prog-client');if(c!==null)state.prog.idealClient=c;
+    const b=g('prog-before');if(b!==null)state.prog.beforeState=b;
+    const a=g('prog-after');if(a!==null)state.prog.afterState=a;
+    const e=g('prog-experience');if(e!==null)state.prog.programExperience=e;
+    const s=g('prog-shift');if(s!==null)state.prog.coreShift=s;
   }
   if(state.step===1&&state.usePhases){
     state.phases.forEach((p,i)=>{
@@ -482,25 +862,28 @@ function saveInputs(){
   }
 }
 
+// ── Main Render ──
 function render(){
   saveInputs();
+  debounceSave();
   renderSteps();
   let html='';
   if(state.step===0)html=renderFoundation();
-  else if(state.step===1&&state.usePhases)html=renderPhases();
+  else if(state.step===1)html=renderPhases();
   else if(state.step===2)html=renderWeekly();
   else if(state.step===3)html=renderAfter();
+  else if(state.step===4)html=renderPromptLib();
   html+=renderNav();
   document.getElementById('content').innerHTML=html;
 }
 
-// Actions
+// ── Actions ──
 function setDuration(v){saveInputs();state.prog.duration=parseInt(v);syncWeeks();render();}
 function togglePhases(){saveInputs();state.usePhases=!state.usePhases;if(!state.usePhases&&state.step===1)state.step=0;render();}
 function setPhaseCount(n){saveInputs();state.prog.phaseCount=n;syncPhases();render();}
 function toggleWeek(i){saveInputs();state.openWeeks.has(i)?state.openWeeks.delete(i):state.openWeeks.add(i);render();}
 function assignPhase(wi,pi){saveInputs();state.weeks[wi].phase=pi;render();}
-function setWeekField(i,f,v){state.weeks[i][f]=v;}
+function setWeekField(i,f,v){state.weeks[i][f]=v;debounceSave();}
 function toggleMod(wi,m){saveInputs();const ms=state.weeks[wi].modalities;const idx=ms.indexOf(m);idx>=0?ms.splice(idx,1):ms.push(m);render();}
 function removeCustomMod(wi,ci){saveInputs();state.weeks[wi].customModalities.splice(ci,1);render();}
 function addCustomMod(e,wi){if(e.key==='Enter'&&e.target.value.trim()){saveInputs();state.weeks[wi].customModalities.push(e.target.value.trim());e.target.value='';render();}}
@@ -508,48 +891,16 @@ function toggleFmt(wi,f){saveInputs();const fs=state.weeks[wi].formats;const idx
 function removeCustomFmt(wi,ci){saveInputs();state.weeks[wi].customFormats.splice(ci,1);render();}
 function addCustomFmt(e,wi){if(e.key==='Enter'&&e.target.value.trim()){saveInputs();state.weeks[wi].customFormats.push(e.target.value.trim());e.target.value='';render();}}
 function setIntensity(wi,id){saveInputs();state.weeks[wi].intensity=state.weeks[wi].intensity===id?'':id;render();}
+function setTone(id){saveInputs();state.prog.tone=state.prog.tone===id?'':id;render();}
 
-function copySnap(){
-  saveInputs();
-  const p=state.prog,ph=state.phases,ws=state.weeks,a=state.after,up=state.usePhases;
-  let t=`✦ SIGNATURE PROGRAM BLUEPRINT\n\n`;
-  if(p.name)t+=`${p.name.toUpperCase()}\n`;
-  if(p.transformation)t+=`"${p.transformation}"\n`;
-  if(p.targetClient)t+=`For: ${p.targetClient}\n`;
-  t+=`${p.duration} weeks`;
-  if(up){const pn=ph.filter(x=>x.name).map(x=>x.name);t+=` · ${p.phaseCount} phases`;if(pn.length)t+=` · ${pn.join(' → ')}`;}
-  t+=`\n`;
-  if(up){const nd=ph.filter(x=>x.name||x.intention);if(nd.length){t+=`\n--- PHASES ---\n`;nd.forEach((x,i)=>{t+=`\nPhase ${i+1}: ${x.name||'(unnamed)'}`;if(x.intention)t+=`\n  ${x.intention}`;t+=`\n`;});}}
-  t+=`\n--- WEEKLY BREAKDOWN ---\n`;
-  ws.forEach((w,i)=>{
-    t+=`\nWEEK ${i+1}`;if(w.title)t+=`: ${w.title}`;
-    if(w.intensity)t+=` [${INT.find(l=>l.id===w.intensity)?.label}]`;
-    if(up&&ph[w.phase]?.name)t+=` (${ph[w.phase].name})`;t+=`\n`;
-    if(w.clientStart||w.clientEnd)t+=`  Transformation: ${w.clientStart||'...'}  →  ${w.clientEnd||'...'}\n`;
-    const am=[...w.modalities,...w.customModalities];if(am.length)t+=`  Modalities: ${am.join(', ')}\n`;
-    const af=[...w.formats,...w.customFormats];if(af.length)t+=`  Format: ${af.join(', ')}\n`;
-    if(w.deliverables)t+=`  Deliverables: ${w.deliverables}\n`;
-    if(w.coreQuestion)t+=`  Core Question: ${w.coreQuestion}\n`;
-    if(w.releasing)t+=`  Releasing: ${w.releasing}\n`;
-    if(w.activating)t+=`  Activating: ${w.activating}\n`;
-  });
-  if(a.nextOffer||a.bridge||a.integration){
-    t+=`\n--- THE AFTER ---\n`;
-    if(a.nextOffer)t+=`Next Offer: ${a.nextOffer}\n`;
-    if(a.bridge)t+=`Bridge: ${a.bridge}\n`;
-    if(a.integration)t+=`Integration: ${a.integration}\n`;
-  }
-  navigator.clipboard.writeText(t).then(()=>{
-    const btn=document.getElementById('copy-btn');btn.textContent='✓ Copied!';btn.classList.add('copied');
-    setTimeout(()=>{btn.textContent='Copy to Clipboard';btn.classList.remove('copied');},2000);
-  }).catch(()=>{
-    const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
-    const btn=document.getElementById('copy-btn');btn.textContent='✓ Copied!';btn.classList.add('copied');
-    setTimeout(()=>{btn.textContent='Copy to Clipboard';btn.classList.remove('copied');},2000);
-  });
+// ── Boot ──
+async function boot(){
+  await loadState();
+  if(!(state.openWeeks instanceof Set))state.openWeeks=new Set(state.openWeeks||[]);
+  if(!(state.promptsExpanded instanceof Set))state.promptsExpanded=new Set(state.promptsExpanded||[]);
+  render();
 }
-
-render();
+boot();
 </script>
 </body>
 </html>
