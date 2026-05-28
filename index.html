@@ -647,10 +647,28 @@ function buildPromptLibrary(){
 
   const weekBlock=hasWeekData?`\n\nWeek-by-Week Breakdown:\n${weekOverview}`:'';
 
+  // Build phase context for arc builder
+  let phaseContext='';
+  if(state.usePhases){
+    const namedPhases=state.phases.filter(x=>x.name||x.intention);
+    if(namedPhases.length){
+      phaseContext=`\n\nThis program uses ${p.phaseCount} phases:\n${state.phases.map((x,i)=>{
+        let line=`Phase ${i+1}`;
+        if(x.name)line+=`: ${x.name}`;
+        if(x.intention)line+=` — ${x.intention}`;
+        return line;
+      }).join('\n')}\nMap the weeks into these phases so the arc feels intentional.`;
+    } else {
+      phaseContext=`\n\nThis program is organized into ${p.phaseCount} phases. Suggest a natural phase grouping for the weeks (e.g. opening/deepening/integration or foundation/activation/mastery) and assign each week accordingly.`;
+    }
+  }
+
   return [
     {name:"Foundation",description:"Start here: name your method, then build your messaging from it",items:[
       {title:"Program Name Brainstorm",type:"START HERE",content:
 `I'm building a ${dur}-week program for this specific person:\n${client}\n\nThe core shift my program creates:\n${shift}\n\nMy signature method is called: ${method}\nMy energetic tone is: ${tone}\n\nBrainstorm 5 program name directions that capture this transformation. For each, give the name and a one-sentence rationale for why it works. The names should feel aligned with the tone, not corporate or generic. Think transformation verbs + evocative concepts.`},
+      {title:"Weekly Arc Builder",type:"START HERE",content:
+`Help me build the week-by-week arc for my signature program.\n\nProgram: ${name} (${dur} weeks)\nSignature Method: ${method}\nIdeal Client: ${client}\nBefore-State: ${before}\nAfter-State: ${after}\nProgram Experience: ${experience}\nCore Shift: ${shift}\nTone: ${tone}${phaseContext}\n\nFor each of the ${dur} weeks, give me:\n1. Week Name — a short, evocative title that captures the energy of that week (not generic like "Week 1: Introduction")\n2. Focus — 2-3 sentences on what this week is about: the theme, what the client is working through, and why it matters at this point in the journey\n3. Deliverables — what the client walks away with at the end of this week (tangible: a framework, a completed worksheet, a recorded practice, a draft, a decision, etc.)\n\nThe arc should feel like a real journey: each week builds on the last, the pacing should alternate between content-heavy and integration weeks, and the whole thing should move the client from the before-state to the after-state in a way that feels earned. Don't front-load everything. Let the middle weeks go deep. Let the final weeks be about ownership and activation, not more content.\n\nWrite in my tone. No em dashes. No generic coaching language. Make the week names feel like chapter titles, not labels.`},
     ]},
     {name:"Transformation Messaging",description:"For the days you talk about what shifts inside your client",items:[
       {title:'"What Does Your Program Do?" Answer',type:"QUICK WIN",content:
