@@ -362,19 +362,21 @@ function goNext(){
   const vi=visIdx();const ci=vi.indexOf(state.step);
   if(ci<vi.length-1)state.step=vi[ci+1];
   render();
+  saveState();
 }
 function goBack(){
   saveInputs();
   const vi=visIdx();const ci=vi.indexOf(state.step);
   if(ci>0)state.step=vi[ci-1];
   render();
+  saveState();
 }
-function goStep(i){saveInputs();state.step=i;render();}
+function goStep(i){saveInputs();state.step=i;render();saveState();}
 
 function clearAll(){
   if(!confirm('Clear all blueprint data? This cannot be undone.'))return;
   state=defaultState();state.openWeeks=new Set();state.promptsExpanded=new Set();
-  debounceSave();render();
+  render();saveState();
 }
 
 // ── Field Helpers ──
@@ -911,6 +913,18 @@ async function boot(){
   if(!(state.openWeeks instanceof Set))state.openWeeks=new Set(state.openWeeks||[]);
   if(!(state.promptsExpanded instanceof Set))state.promptsExpanded=new Set(state.promptsExpanded||[]);
   render();
+
+  // Save on any typing inside the card
+  document.getElementById('content').addEventListener('input',()=>{
+    saveInputs();
+    debounceSave();
+  });
+
+  // Safety net: save immediately before leaving
+  window.addEventListener('beforeunload',()=>{
+    saveInputs();
+    saveState();
+  });
 }
 boot();
 </script>
