@@ -262,7 +262,7 @@ const TONES=[
 ];
 const ALL_STEPS=["Foundation","Phases","Weekly Build","The After","Prompt Library"];
 
-const emptyWeek=()=>({title:"",phase:0,modalities:[],customModalities:[],formats:[],customFormats:[],intensity:"",clientStart:"",clientEnd:"",deliverables:"",coreQuestion:"",releasing:"",activating:""});
+const emptyWeek=()=>({title:"",phase:0,focus:"",formats:[],customFormats:[],intensity:"",deliverables:""});
 
 const defaultState=()=>({
   step:0,usePhases:true,
@@ -474,7 +474,7 @@ function renderPhases(){
 
 // ── Weekly Build ──
 function renderWeekly(){
-  let html=`<div class="sec-head"><h2>Weekly Build</h2><p>Expand each week to map the modalities, transformation, format, and deliverables.</p></div>`;
+  let html=`<div class="sec-head"><h2>Weekly Build</h2><p>Expand each week to map the focus, format, and deliverables.</p></div>`;
   html+=`<div class="pacing"><div class="pacing-label">Pacing Overview</div><div class="pacing-bars">`;
   const ic={heavy:'var(--copper)',balanced:'var(--ochre)',integration:'var(--sage)'};
   state.weeks.forEach((w,i)=>{
@@ -485,7 +485,7 @@ function renderWeekly(){
   html+=`</div></div>`;
   state.weeks.forEach((w,i)=>{
     const pc=state.usePhases?PCS[w.phase%PCS.length]:'var(--sage)';
-    const af=[...w.formats,...w.customFormats];
+    const af=[...w.formats,...(w.customFormats||[])];
     const isOpen=state.openWeeks.has(i);
     html+=`<div class="week-card" style="border-left-color:${pc}">
       <button class="week-header" onclick="toggleWeek(${i})">
@@ -513,16 +513,7 @@ function renderWeekly(){
         html+=`</div></div>`;
       }
       html+=fieldSmHTML(`wk-title-${i}`,'Week Title',w.title,'e.g. Opening the Portal, Anchoring Your Method...');
-      html+=`<div class="field field-sm"><label>Transformation Arc</label>
-        <div class="transform-row">
-          <input type="text" id="wk-start-${i}" value="${esc(w.clientStart)}" placeholder="Client arrives feeling...">
-          <span class="transform-arrow">\u2192</span>
-          <input type="text" id="wk-end-${i}" value="${esc(w.clientEnd)}" placeholder="Client leaves with...">
-        </div></div>`;
-      html+=`<div class="field field-sm"><label>Modalities Used</label><div class="tags">`;
-      html+=tagHTML(MODS,w.modalities,'var(--forest)',`toggleMod.bind(null,${i})`);
-      w.customModalities.forEach((m,ci)=>{html+=`<button class="tag active" style="border-color:var(--copper);background:var(--copper)" onclick="removeCustomMod(${i},${ci})">${esc(m)}</button>`;});
-      html+=`</div><div class="adder"><input placeholder="+ Add custom modality (press Enter)" onkeydown="addCustomMod(event,${i})"></div></div>`;
+      html+=fieldSmHTML(`wk-focus-${i}`,'Focus',w.focus,'What is the primary focus or theme of this week?',true);
       html+=`<div class="field field-sm"><label>Session Format</label><div class="tags">`;
       html+=tagHTML(FMTS,w.formats,'var(--sage)',`toggleFmt.bind(null,${i})`);
       w.customFormats.forEach((f,ci)=>{html+=`<button class="tag active" style="border-color:var(--copper);background:var(--copper)" onclick="removeCustomFmt(${i},${ci})">${esc(f)}</button>`;});
@@ -535,11 +526,6 @@ function renderWeekly(){
       });
       html+=`</div></div>`;
       html+=fieldSmHTML(`wk-del-${i}`,'Client Deliverables',w.deliverables,'What does the client walk away with?',true);
-      html+=`<div class="prompts-box"><div class="prompts-head">✦ Transformation Prompts</div>
-        ${fieldSmHTML(`wk-cq-${i}`,'What is the core question this week answers?',w.coreQuestion,"e.g. How do I trust what I'm receiving?")}
-        ${fieldSmHTML(`wk-rel-${i}`,'What belief or pattern is being released?',w.releasing,"e.g. The belief that intuition isn't reliable enough")}
-        ${fieldSmHTML(`wk-act-${i}`,'What new capacity is being activated?',w.activating,'e.g. Confidence to name and claim their unique reading style')}
-      </div>`;
       html+=`</div>`;
     }
     html+=`</div>`;
@@ -554,6 +540,11 @@ function renderAfter(){
   html+=fieldSmHTML('after-next',"What's the natural next offer or container?",a.nextOffer,'e.g. A membership, a 1:1 package, a mastermind...',true);
   html+=fieldSmHTML('after-bridge','How will you bridge them there?',a.bridge,'A call, an email sequence, a special offer?',true);
   html+=fieldSmHTML('after-int','Integration Period',a.integration,'Post-program integration window? Community access?',true);
+  // Copy All Details button
+  html+=`<div style="margin-top:24px">
+    <button class="copy-all-btn" id="copy-all-btn" onclick="copyAllDetails()">📋 Copy All Program Details</button>
+    <div class="gen-note" style="margin-top:4px">Paste into your Google Doc, Notion, or Skool group for safekeeping</div>
+  </div>`;
   // Snapshot
   html+=renderSnapshot();
   return html;
@@ -561,8 +552,7 @@ function renderAfter(){
 
 function renderSnapshot(){
   let html=`<div class="snapshot"><div class="snap-header">
-    <div class="snap-title">✦ Program Blueprint</div>
-    <button class="copy-btn" id="copy-btn" onclick="copySnap()">Copy to Clipboard</button></div>`;
+    <div class="snap-title">✦ Program Blueprint</div></div>`;
   const p=state.prog;
   if(p.name)html+=`<div class="snap-name">${esc(p.name)}</div>`;
   if(p.methodName)html+=`<div style="font-family:var(--accent);font-style:italic;font-size:13px;color:var(--sage);margin-bottom:6px">Powered by ${esc(p.methodName)}</div>`;
@@ -587,10 +577,9 @@ function renderSnapshot(){
     html+=`</div>`;
   }
   state.weeks.forEach((w,i)=>{
-    const am=[...w.modalities,...w.customModalities];
-    const af=[...w.formats,...w.customFormats];
+    const af=[...w.formats,...(w.customFormats||[])];
     const pc=state.usePhases?PCS[w.phase%PCS.length]:'var(--sage)';
-    const has=w.title||w.clientStart||w.clientEnd||am.length||af.length||w.deliverables||w.coreQuestion;
+    const has=w.title||w.focus||af.length||w.deliverables;
     html+=`<div class="snap-week"><div class="snap-week-top"><div>
       <span class="snap-wk-num">Week ${i+1}</span>
       ${w.title?`<span class="snap-wk-title">${esc(w.title)}</span>`:''}
@@ -598,17 +587,9 @@ function renderSnapshot(){
       ${w.intensity?`<span style="font-size:12px">${INT.find(l=>l.id===w.intensity)?.icon||''}</span>`:''}
       ${state.usePhases&&state.phases[w.phase]?.name?`<span class="phase-badge" style="background:${pc};font-size:9px">${esc(state.phases[w.phase].name)}</span>`:''}
     </div></div>`;
-    if(w.clientStart||w.clientEnd)html+=`<div class="snap-info"><span class="snap-info-label">Transformation: </span>${esc(w.clientStart)}${w.clientStart&&w.clientEnd?' <span style="color:var(--copper)">\u2192</span> ':''}${esc(w.clientEnd)}</div>`;
-    if(am.length)html+=`<div class="snap-info"><span class="snap-info-label">Modalities: </span>${am.map(esc).join(', ')}</div>`;
+    if(w.focus)html+=`<div class="snap-info"><span class="snap-info-label">Focus: </span>${esc(w.focus)}</div>`;
     if(af.length)html+=`<div class="snap-info"><span class="snap-info-label">Format: </span>${af.map(esc).join(', ')}</div>`;
     if(w.deliverables)html+=`<div class="snap-info"><span class="snap-info-label">Deliverables: </span>${esc(w.deliverables)}</div>`;
-    if(w.coreQuestion||w.releasing||w.activating){
-      html+=`<div class="snap-prompts">`;
-      if(w.coreQuestion)html+=`<div style="font-family:var(--accent);font-style:italic;color:var(--brown)">Core Question: ${esc(w.coreQuestion)}</div>`;
-      if(w.releasing)html+=`<div style="color:var(--brown)">Releasing: ${esc(w.releasing)}</div>`;
-      if(w.activating)html+=`<div style="color:var(--copper)">Activating: ${esc(w.activating)}</div>`;
-      html+=`</div>`;
-    }
     if(!has)html+=`<div class="snap-unmapped">(not yet mapped)</div>`;
     html+=`</div>`;
   });
@@ -638,6 +619,34 @@ function buildPromptLibrary(){
   const tone=p.tone||'grounded';
   const dur=p.duration;
 
+  // Build weekly data helpers
+  const mappedWeeks=state.weeks.filter(w=>w.title||w.focus||w.deliverables);
+  const hasWeekData=mappedWeeks.length>0;
+
+  let weekOverview='';
+  if(hasWeekData){
+    weekOverview=state.weeks.map((w,i)=>{
+      let line=`Week ${i+1}`;
+      if(w.title)line+=`: ${w.title}`;
+      if(w.focus)line+=`\n  Focus: ${w.focus}`;
+      const af=[...w.formats,...(w.customFormats||[])];
+      if(af.length)line+=`\n  Format: ${af.join(', ')}`;
+      if(w.intensity)line+=`\n  Intensity: ${INT.find(l=>l.id===w.intensity)?.label||w.intensity}`;
+      if(w.deliverables)line+=`\n  Deliverables: ${w.deliverables}`;
+      return line;
+    }).join('\n');
+  }
+
+  const allDeliverables=state.weeks.filter(w=>w.deliverables).map((w,i)=>w.deliverables);
+  const hasDeliverables=allDeliverables.length>0;
+  const deliverablesBlock=hasDeliverables?`\nClient Deliverables Across the Program:\n${allDeliverables.map((d,i)=>`- ${d}`).join('\n')}`:'';
+
+  const allFormats=[...new Set(state.weeks.flatMap(w=>[...w.formats,...(w.customFormats||[])]))];
+  const hasFormats=allFormats.length>0;
+  const formatsBlock=hasFormats?`\nSession Formats Used: ${allFormats.join(', ')}`:'';
+
+  const weekBlock=hasWeekData?`\n\nWeek-by-Week Breakdown:\n${weekOverview}`:'';
+
   return [
     {name:"Foundation",description:"Start here: name your method, then build your messaging from it",items:[
       {title:"Program Name Brainstorm",type:"START HERE",content:
@@ -655,19 +664,21 @@ function buildPromptLibrary(){
       {title:"Short Bio Blurb",type:"QUICK WIN",content:
 `Here is my program and brand context:\n\nProgram: ${name}\nSignature Method: ${method}\nI help: ${client}\nBefore-State: ${before}\nAfter-State: ${after}\nCore Shift: ${shift}\nTone: ${tone}\n\nWrite 3 versions of a short bio using this exact 4-line framework. This is for an Instagram bio so the TOTAL must be under 150 characters including emojis and spaces. Count the characters for each version and confirm each is under 150.\n\nFramework:\nLine 1: Emoji + Who I help and how\nLine 2: Emoji + Credibility or proof (what gives me authority)\nLine 3: Emoji + What makes me different (my method name or unique angle)\nLine 4: Emoji + FREE [name of freebie, lead magnet, or session] 👇\n\nRules:\n- Every line MUST start with an emoji (✦ 🔮 🌙 💫 🔥 ⚡ 🌿 ✨ 🔑 💎 or similar, match my tone)\n- Each line should be a clear, readable mini-statement that my ideal client would immediately understand. Not cryptic fragments. Not full sentences either. Think the way real Instagram bios read: conversational, scannable, and clear at a glance.\n- Example of TOO compressed (bad): "🔥 Spiritual coaches, clearly named" — this means nothing to a reader\n- Example of JUST RIGHT (good): "🔥 Helping spiritual coaches name their method" — clear, specific, scannable\n- Do NOT start any line with "I" — lead with the value, the client, or the method\n- The CTA line (Line 4) must name a specific free offer and end with 👇 to point to the link\n- Example CTA: "✨ FREE Sacred Vision Activation 👇" or "🔮 Free Tarot Clarity Session 👇"\n- The freebie/session name should sound like a real offer my ideal client would want, not a generic placeholder\n- Make each version feel activated\n\nAfter writing all 3 versions, list the character count for each one. If any version exceeds 150 characters, rewrite it shorter.`},
       {title:"Signature Program Description",type:"DEEPER PIECE",content:
-`Write a 4-6 sentence program description I can use on a sales page or landing page.\n\nProgram: ${name} (${dur} weeks)\nSignature Method: ${method}\nIdeal Client: ${client}\nBefore-State: ${before}\nAfter-State: ${after}\nProgram Experience: ${experience}\nCore Shift: ${shift}\nTone: ${tone}\n\nLead with the transformation, not the logistics. Make it feel like an invitation, not a pitch. No em dashes. No negation framing ("this isn't your typical..."). If the method name is provided, weave it in naturally.`},
+`Write a 4-6 sentence program description I can use on a sales page or landing page.\n\nProgram: ${name} (${dur} weeks)\nSignature Method: ${method}\nIdeal Client: ${client}\nBefore-State: ${before}\nAfter-State: ${after}\nProgram Experience: ${experience}\nCore Shift: ${shift}\nTone: ${tone}${formatsBlock}${deliverablesBlock}${weekBlock}\n\nLead with the transformation, not the logistics. But weave in enough specifics from the weekly breakdown and deliverables that the reader can feel what happens inside the container. Make it feel like an invitation, not a pitch. No em dashes. No negation framing ("this isn't your typical..."). If the method name is provided, weave it in naturally.`},
     ]},
     {name:"Sales & Promo",description:"For the days you invite people in",items:[
       {title:"Promo Caption Prompts",type:"DEEPER PIECE",content:
-`Write 3 social media caption frameworks I can use to promote my program.\n\nProgram: ${name}\nMethod: ${method}\nIdeal Client: ${client}\nBefore-State: ${before}\nAfter-State: ${after}\nCore Shift: ${shift}\nTone: ${tone}\n\nEach caption should have:\n1. A hook (first line that stops the scroll)\n2. A body (the story or insight, 3-5 sentences)\n3. A CTA (clear next step)\n\nWrite in my tone. No em dashes. Use line breaks for readability.`},
+`Write 3 social media caption frameworks I can use to promote my program.\n\nProgram: ${name} (${dur} weeks)\nMethod: ${method}\nIdeal Client: ${client}\nBefore-State: ${before}\nAfter-State: ${after}\nCore Shift: ${shift}\nTone: ${tone}${formatsBlock}${deliverablesBlock}${weekBlock}\n\nEach caption should have:\n1. A hook (first line that stops the scroll)\n2. A body (the story or insight, 3-5 sentences)\n3. A CTA (clear next step)\n\nUse specific details from the weekly breakdown and deliverables to make each caption concrete. Don't just sell the transformation in the abstract. Reference what actually happens inside. Write in my tone. No em dashes. Use line breaks for readability.`},
       {title:"Sales Page Section Prompts",type:"DEEPER PIECE",content:
-`Write the key sections for a simple sales page for my program.\n\nProgram: ${name} (${dur} weeks)\nMethod: ${method}\nIdeal Client: ${client}\nBefore-State: ${before}\nAfter-State: ${after}\nProgram Experience: ${experience}\nCore Shift: ${shift}\nTone: ${tone}\n\nGenerate:\n- A headline\n- A subheadline\n- 3 bullet points of what they'll walk away with\n- A closing CTA paragraph\n\nLead with transformation, not features. No em dashes. No negation framing. Make it feel like a sacred invitation, not a hard sell.`},
+`Write the key sections for a simple sales page for my program.\n\nProgram: ${name} (${dur} weeks)\nMethod: ${method}\nIdeal Client: ${client}\nBefore-State: ${before}\nAfter-State: ${after}\nProgram Experience: ${experience}\nCore Shift: ${shift}\nTone: ${tone}${formatsBlock}${deliverablesBlock}${weekBlock}\n\nGenerate:\n- A headline\n- A subheadline\n- 3 bullet points of what they'll walk away with (use the actual deliverables and weekly focuses, not generic outcomes)\n- A "What's Inside" section that paints the experience using the session formats and weekly breakdown\n- A closing CTA paragraph\n\nLead with transformation, not features. But make "What's Inside" specific enough that the reader can picture themselves in it. No em dashes. No negation framing. Make it feel like a sacred invitation, not a hard sell.`},
     ]},
     {name:"Ongoing Tools",description:"Copy you can return to and reuse",items:[
       {title:"Objection Responses",type:"ONGOING TOOL",content:
-`Write warm, grounded responses to these 4 common objections about my program.\n\nProgram: ${name} (${dur} weeks)\nIdeal Client: ${client}\nCore Shift: ${shift}\nTone: ${tone}\n\nObjections to address:\n1. "I can't afford it right now"\n2. "I'm not sure it's the right time"\n3. "How is this different from other programs?"\n4. "I need to think about it"\n\nEach response should be 2-3 sentences. Empathetic, not pushy. Honor their process while gently reframing. No manipulation tactics.`},
+`Write warm, grounded responses to these 4 common objections about my program.\n\nProgram: ${name} (${dur} weeks)\nIdeal Client: ${client}\nCore Shift: ${shift}\nTone: ${tone}${formatsBlock}${deliverablesBlock}${hasWeekData?`\n\nHere's what the program actually includes:\n${weekOverview}`:''}\n\nObjections to address:\n1. "I can't afford it right now"\n2. "I'm not sure it's the right time"\n3. "How is this different from other programs?"\n4. "I need to think about it"\n\nEach response should be 2-3 sentences. Empathetic, not pushy. Honor their process while gently reframing. No manipulation tactics. For "how is this different," lean on the specific formats, structure, and deliverables that make this program tangible and distinct.`},
       {title:"Community Copy",type:"ONGOING TOOL",content:
-`Write 3 community posts for my program's Skool or Circle community.\n\nProgram: ${name}\nMethod: ${method}\nIdeal Client: ${client}\nCore Shift: ${shift}\nTone: ${tone}\n\nWrite:\n1. A welcome post (for when new members join)\n2. A weekly check-in prompt (to spark engagement and reflection)\n3. A celebration/wins prompt (to invite people to share their progress)\n\nKeep them warm, specific to the transformation, and written in my tone. No em dashes.`},
+`Write 3 community posts for my program's Skool or Circle community.\n\nProgram: ${name} (${dur} weeks)\nMethod: ${method}\nIdeal Client: ${client}\nCore Shift: ${shift}\nTone: ${tone}${formatsBlock}${hasWeekData?`\n\nHere's the week-by-week structure:\n${weekOverview}`:''}\n\nWrite:\n1. A welcome post (for when new members join). Tell them what to expect from the program structure, formats, and pacing so they feel oriented.\n2. A weekly check-in prompt (to spark engagement and reflection)\n3. A celebration/wins prompt (to invite people to share their progress)\n\nKeep them warm, specific to the transformation, and written in my tone. The welcome post especially should reference real program details so new members know what they're stepping into. No em dashes.`},
+      {title:"Weekly Announcement / Email",type:"ONGOING TOOL",content:
+`Write a short announcement post or email for each week of my program. These are what I'd send to participants at the start of each week to set the tone and focus.\n\nProgram: ${name} (${dur} weeks)\nMethod: ${method}\nIdeal Client: ${client}\nCore Shift: ${shift}\nTone: ${tone}${hasWeekData?`\n\nWeek-by-Week Breakdown:\n${weekOverview}`:''}\n\nFor each week, write:\n- A subject line or post title (short, energizing)\n- 3-5 sentences that set the intention for the week, reference what they'll be doing (format and focus), and connect it back to the bigger transformation\n- A closing line that feels like an invitation into the week's work\n\nWrite all ${dur} weeks. Each should feel distinct and build momentum from the last. Match my tone. No em dashes. No generic "this week we'll be diving into..." openers.`},
     ]},
   ];
 }
@@ -784,13 +795,9 @@ function copyAllDetails(){
     t+=`\nWEEK ${i+1}`;if(w.title)t+=`: ${w.title}`;
     if(w.intensity)t+=` [${INT.find(l=>l.id===w.intensity)?.label}]`;
     if(state.usePhases&&state.phases[w.phase]?.name)t+=` (${state.phases[w.phase].name})`;t+=`\n`;
-    if(w.clientStart||w.clientEnd)t+=`  Transformation: ${w.clientStart||'...'} \u2192 ${w.clientEnd||'...'}\n`;
-    const am=[...w.modalities,...w.customModalities];if(am.length)t+=`  Modalities: ${am.join(', ')}\n`;
-    const af=[...w.formats,...w.customFormats];if(af.length)t+=`  Format: ${af.join(', ')}\n`;
+    if(w.focus)t+=`  Focus: ${w.focus}\n`;
+    const af=[...w.formats,...(w.customFormats||[])];if(af.length)t+=`  Format: ${af.join(', ')}\n`;
     if(w.deliverables)t+=`  Deliverables: ${w.deliverables}\n`;
-    if(w.coreQuestion)t+=`  Core Question: ${w.coreQuestion}\n`;
-    if(w.releasing)t+=`  Releasing: ${w.releasing}\n`;
-    if(w.activating)t+=`  Activating: ${w.activating}\n`;
   });
   const a=state.after;
   if(a.nextOffer||a.bridge||a.integration){
@@ -804,15 +811,6 @@ function copyAllDetails(){
     btn.innerHTML='✓ Copied!';btn.classList.add('copied');
     setTimeout(()=>{btn.innerHTML='📋 Copy All Program Details';btn.classList.remove('copied');},2000);
   });
-}
-
-// ── Copy Snapshot (from The After page) ──
-function copySnap(){
-  saveInputs();
-  copyAllDetails();
-  const btn=document.getElementById('copy-btn');
-  if(btn){btn.textContent='✓ Copied!';btn.classList.add('copied');
-  setTimeout(()=>{btn.textContent='Copy to Clipboard';btn.classList.remove('copied');},2000);}
 }
 
 // ── Nav ──
@@ -847,12 +845,8 @@ function saveInputs(){
   if(state.step===2){
     state.weeks.forEach((w,i)=>{
       const t=g(`wk-title-${i}`);if(t!==null)w.title=t;
-      const s=g(`wk-start-${i}`);if(s!==null)w.clientStart=s;
-      const e=g(`wk-end-${i}`);if(e!==null)w.clientEnd=e;
+      const f=g(`wk-focus-${i}`);if(f!==null)w.focus=f;
       const d=g(`wk-del-${i}`);if(d!==null)w.deliverables=d;
-      const cq=g(`wk-cq-${i}`);if(cq!==null)w.coreQuestion=cq;
-      const rl=g(`wk-rel-${i}`);if(rl!==null)w.releasing=rl;
-      const ac=g(`wk-act-${i}`);if(ac!==null)w.activating=ac;
     });
   }
   if(state.step===3){
