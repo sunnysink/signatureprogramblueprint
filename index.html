@@ -281,20 +281,36 @@ state.promptsExpanded=new Set();
 // ── Persistence ──
 const STORAGE_KEY='signature-blueprint-v3';
 let saveTimer=null;
+let storageAvailable=false;
+
+function hasStorage(){
+  return typeof window.storage!=='undefined'&&window.storage!==null&&typeof window.storage.set==='function';
+}
+
+async function testStorage(){
+  try{
+    if(!hasStorage()){showSaveStatus('⚠ Storage not available',true);return false;}
+    const testResult=await window.storage.set('_test','1');
+    if(!testResult){showSaveStatus('⚠ Storage write failed',true);return false;}
+    storageAvailable=true;
+    return true;
+  }catch(e){showSaveStatus('⚠ Storage error: '+e.message,true);return false;}
+}
 
 async function saveState(){
   try{
-    if(typeof window.storage==='undefined')return;
+    if(!storageAvailable)return;
     const s={...state,openWeeks:Array.from(state.openWeeks),promptsExpanded:Array.from(state.promptsExpanded)};
-    await window.storage.set(STORAGE_KEY,JSON.stringify(s));
-    showSaveStatus('✦ Saved');
-  }catch(e){console.log('Save error:',e);}
+    const result=await window.storage.set(STORAGE_KEY,JSON.stringify(s));
+    if(result)showSaveStatus('✦ Saved');
+    else showSaveStatus('⚠ Save returned null',true);
+  }catch(e){showSaveStatus('⚠ Save error: '+e.message,true);}
 }
 function debounceSave(){clearTimeout(saveTimer);saveTimer=setTimeout(saveState,800);}
 
 async function loadState(){
   try{
-    if(typeof window.storage==='undefined')return false;
+    if(!hasStorage())return false;
     const result=await window.storage.get(STORAGE_KEY);
     if(result&&result.value){
       const loaded=JSON.parse(result.value);
@@ -308,14 +324,17 @@ async function loadState(){
       showSaveStatus('✦ Blueprint restored');
       return true;
     }
-  }catch(e){console.log('Load error:',e);}
+  }catch(e){/* key not found is expected on first use */}
   return false;
 }
 
-function showSaveStatus(msg){
+function showSaveStatus(msg,isError){
   const el=document.getElementById('save-status');
-  if(!el)return;el.textContent=msg;el.style.opacity='1';
-  setTimeout(()=>{el.style.opacity='0';},2200);
+  if(!el)return;
+  el.textContent=msg;
+  el.style.opacity='1';
+  el.style.color=isError?'var(--copper)':'var(--sage)';
+  if(!isError)setTimeout(()=>{el.style.opacity='0';},2200);
 }
 
 // ── Helpers ──
@@ -909,7 +928,8 @@ function setTone(id){saveInputs();state.prog.tone=state.prog.tone===id?'':id;ren
 
 // ── Boot ──
 async function boot(){
-  await loadState();
+  await testStorage();
+  if(storageAvailable)await loadState();
   if(!(state.openWeeks instanceof Set))state.openWeeks=new Set(state.openWeeks||[]);
   if(!(state.promptsExpanded instanceof Set))state.promptsExpanded=new Set(state.promptsExpanded||[]);
   render();
