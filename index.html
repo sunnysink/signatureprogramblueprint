@@ -278,42 +278,55 @@ let state=defaultState();
 state.openWeeks=new Set();
 state.promptsExpanded=new Set();
 
-// ── Persistence ──
+// ── Persistence (dual: window.storage for Claude chat, localStorage for downloaded use) ──
 const STORAGE_KEY='signature-blueprint-v3';
 let saveTimer=null;
-let storageAvailable=false;
+let storageMode=null; // 'cloud' | 'local' | null
 
-function hasStorage(){
-  return typeof window.storage!=='undefined'&&window.storage!==null&&typeof window.storage.set==='function';
-}
-
-async function testStorage(){
+async function detectStorage(){
+  // Try Anthropic's window.storage first (Claude chat sandbox)
   try{
-    if(!hasStorage()){showSaveStatus('⚠ Storage not available',true);return false;}
-    const testResult=await window.storage.set('_test','1');
-    if(!testResult){showSaveStatus('⚠ Storage write failed',true);return false;}
-    storageAvailable=true;
-    return true;
-  }catch(e){showSaveStatus('⚠ Storage error: '+e.message,true);return false;}
+    if(typeof window.storage!=='undefined'&&window.storage!==null&&typeof window.storage.set==='function'){
+      const r=await window.storage.set('_test','1');
+      if(r){storageMode='cloud';return true;}
+    }
+  }catch(e){}
+  // Fall back to localStorage (downloaded/local HTML)
+  try{
+    localStorage.setItem('_test','1');localStorage.removeItem('_test');
+    storageMode='local';return true;
+  }catch(e){}
+  showSaveStatus('\u26A0 No storage available',true);
+  return false;
 }
 
 async function saveState(){
   try{
-    if(!storageAvailable)return;
+    if(!storageMode)return;
     const s={...state,openWeeks:Array.from(state.openWeeks),promptsExpanded:Array.from(state.promptsExpanded)};
-    const result=await window.storage.set(STORAGE_KEY,JSON.stringify(s));
-    if(result)showSaveStatus('✦ Saved');
-    else showSaveStatus('⚠ Save returned null',true);
-  }catch(e){showSaveStatus('⚠ Save error: '+e.message,true);}
+    const json=JSON.stringify(s);
+    if(storageMode==='cloud'){
+      const r=await window.storage.set(STORAGE_KEY,json);
+      if(r)showSaveStatus('\u2726 Saved');
+    }else{
+      localStorage.setItem(STORAGE_KEY,json);
+      showSaveStatus('\u2726 Saved');
+    }
+  }catch(e){showSaveStatus('\u26A0 Save error',true);}
 }
 function debounceSave(){clearTimeout(saveTimer);saveTimer=setTimeout(saveState,800);}
 
 async function loadState(){
   try{
-    if(!hasStorage())return false;
-    const result=await window.storage.get(STORAGE_KEY);
-    if(result&&result.value){
-      const loaded=JSON.parse(result.value);
+    let json=null;
+    if(storageMode==='cloud'){
+      const result=await window.storage.get(STORAGE_KEY);
+      if(result&&result.value)json=result.value;
+    }else if(storageMode==='local'){
+      json=localStorage.getItem(STORAGE_KEY);
+    }
+    if(json){
+      const loaded=JSON.parse(json);
       state={...defaultState(),...loaded,
         prog:{...defaultState().prog,...(loaded.prog||{})},
         after:{...defaultState().after,...(loaded.after||{})}
@@ -321,10 +334,10 @@ async function loadState(){
       state.openWeeks=new Set(loaded.openWeeks||[]);
       state.promptsExpanded=new Set(loaded.promptsExpanded||[]);
       state.weeks=state.weeks.map(w=>({...emptyWeek(),...w}));
-      showSaveStatus('✦ Blueprint restored');
+      showSaveStatus('\u2726 Blueprint restored');
       return true;
     }
-  }catch(e){/* key not found is expected on first use */}
+  }catch(e){/* key not found on first use */}
   return false;
 }
 
@@ -928,8 +941,8 @@ function setTone(id){saveInputs();state.prog.tone=state.prog.tone===id?'':id;ren
 
 // ── Boot ──
 async function boot(){
-  await testStorage();
-  if(storageAvailable)await loadState();
+  await detectStorage();
+  if(storageMode)await loadState();
   if(!(state.openWeeks instanceof Set))state.openWeeks=new Set(state.openWeeks||[]);
   if(!(state.promptsExpanded instanceof Set))state.promptsExpanded=new Set(state.promptsExpanded||[]);
   render();
